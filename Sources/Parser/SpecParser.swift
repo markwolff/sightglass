@@ -58,6 +58,12 @@ public struct SpecParser {
         return spec
     }
 
+    /// Encodes a CodeSpec back into YAML for persistence.
+    public static func encode(_ spec: CodeSpec) throws -> String {
+        let encoder = YAMLEncoder()
+        return try encoder.encode(spec)
+    }
+
     /// Validates a CodeSpec for structural consistency and file-backed integrity.
     public static func validate(_ spec: CodeSpec, repositoryRoot: URL? = nil) -> ValidationResult {
         var result = ValidationResult()

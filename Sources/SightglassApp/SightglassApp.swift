@@ -30,6 +30,20 @@ struct SightglassApp: App {
                 }
                 .keyboardShortcut("o", modifiers: .command)
             }
+
+            CommandGroup(replacing: .saveItem) {
+                Button("Save") {
+                    appState.saveCurrentSpec()
+                }
+                .keyboardShortcut("s", modifiers: .command)
+                .disabled(!appState.canSave)
+
+                Button("Save As...") {
+                    appState.presentSaveAsPicker()
+                }
+                .keyboardShortcut("s", modifiers: [.command, .shift])
+                .disabled(!appState.canSave)
+            }
         }
     }
 }

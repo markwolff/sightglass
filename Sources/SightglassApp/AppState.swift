@@ -113,6 +113,20 @@ public final class AppState: ObservableObject {
         static let folders = "recentFolders"
     }
 
+    private enum SaveError: LocalizedError {
+        case noSpecLoaded
+        case invalidSpec(ValidationResult)
+
+        var errorDescription: String? {
+            switch self {
+            case .noSpecLoaded:
+                return "Load or generate a spec before saving."
+            case .invalidSpec:
+                return "The current spec has blocking validation errors and cannot be saved."
+            }
+        }
+    }
+
     private let userDefaults: UserDefaults
     private let fileManager: FileManager
     private let maxRecentLocations = 8
@@ -133,6 +147,9 @@ public final class AppState: ObservableObject {
 
     /// Whether the folder picker is shown.
     @Published var showFolderPicker = false
+
+    /// Whether the save destination picker is shown.
+    @Published var showSaveLocationPicker = false
 
     /// Error message to display, if any.
     @Published var errorMessage: String?
@@ -182,6 +199,10 @@ public final class AppState: ObservableObject {
     /// Recently opened folders.
     @Published private(set) var recentFolders: [RecentLocation]
 
+    public var canSave: Bool {
+        currentSpec != nil
+    }
+
     public var selectedNode: SpecNode? {
         guard let selectedNodeID else { return nil }
         return currentSpec?.nodes.first(where: { $0.id == selectedNodeID })
@@ -227,6 +248,61 @@ public final class AppState: ObservableObject {
 
     public func presentFolderPicker() {
         showFolderPicker = true
+    }
+
+    public func presentSaveAsPicker() {
+        guard canSave else {
+            errorMessage = SaveError.noSpecLoaded.localizedDescription
+            return
+        }
+
+        showSaveLocationPicker = true
+    }
+
+    public func saveCurrentSpec() {
+        guard let currentSpec else {
+            errorMessage = SaveError.noSpecLoaded.localizedDescription
+            return
+        }
+
+        guard let specFileURL else {
+            presentSaveAsPicker()
+            return
+        }
+
+        let repositoryRoot = (currentRepoRoot ?? specFileURL.deletingLastPathComponent()).standardizedFileURL
+
+        do {
+            try persist(
+                spec: currentSpec,
+                to: specFileURL,
+                repositoryRoot: repositoryRoot,
+                accessScopeURLs: [specFileURL, repositoryRoot]
+            )
+        } catch {
+            errorMessage = "Failed to save spec: \(error.localizedDescription)"
+        }
+    }
+
+    public func saveCurrentSpec(in directoryURL: URL) {
+        guard let currentSpec else {
+            errorMessage = SaveError.noSpecLoaded.localizedDescription
+            return
+        }
+
+        let standardizedDirectoryURL = directoryURL.standardizedFileURL
+        let destinationURL = standardizedDirectoryURL.appendingPathComponent(".sightglass.yaml", isDirectory: false)
+
+        do {
+            try persist(
+                spec: currentSpec,
+                to: destinationURL,
+                repositoryRoot: standardizedDirectoryURL,
+                accessScopeURLs: [standardizedDirectoryURL]
+            )
+        } catch {
+            errorMessage = "Failed to save spec: \(error.localizedDescription)"
+        }
     }
 
     func canOpen(url: URL) -> Bool {
@@ -537,6 +613,61 @@ public final class AppState: ObservableObject {
             || filename == ".sightglass.yml"
             || fileExtension == "yaml"
             || fileExtension == "yml"
+    }
+
+    private func persist(
+        spec: CodeSpec,
+        to destinationURL: URL,
+        repositoryRoot: URL,
+        accessScopeURLs: [URL]
+    ) throws {
+        let standardizedDestinationURL = destinationURL.standardizedFileURL
+        let standardizedRepositoryRoot = repositoryRoot.standardizedFileURL
+        let validation = SpecParser.validate(spec, repositoryRoot: standardizedRepositoryRoot)
+
+        validationResult = validation
+
+        guard validation.isValid else {
+            freshnessState = .validationBlocked
+            throw SaveError.invalidSpec(validation)
+        }
+
+        let yaml = try SpecParser.encode(spec)
+        let data = Data(yaml.utf8)
+
+        try withSecurityScopedAccess(to: accessScopeURLs.map(\.standardizedFileURL)) {
+            try fileManager.createDirectory(
+                at: standardizedDestinationURL.deletingLastPathComponent(),
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+            try data.write(to: standardizedDestinationURL, options: [.atomic])
+        }
+
+        specFileURL = standardizedDestinationURL
+        currentRepoRoot = standardizedRepositoryRoot
+        repositoryContext = inspectRepository(at: standardizedRepositoryRoot)
+        errorMessage = nil
+        registerRecentLocation(standardizedDestinationURL, kind: .specFile)
+        registerRecentLocation(standardizedRepositoryRoot, kind: .folder)
+        freshnessState = validation.warnings.isEmpty ? .specLoaded : .specLoadedWithWarnings
+    }
+
+    private func withSecurityScopedAccess<T>(to urls: [URL], operation: () throws -> T) throws -> T {
+        let accessResults = urls.reduce(into: [(url: URL, accessed: Bool)]()) { result, url in
+            guard !result.contains(where: { $0.url == url }) else {
+                return
+            }
+            result.append((url: url, accessed: url.startAccessingSecurityScopedResource()))
+        }
+
+        defer {
+            for result in accessResults.reversed() where result.accessed {
+                result.url.stopAccessingSecurityScopedResource()
+            }
+        }
+
+        return try operation()
     }
 
     private func registerRecentLocation(_ url: URL, kind: RecentLocation.Kind) {

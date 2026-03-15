@@ -54,6 +54,13 @@ public struct ContentView: View {
         ) { result in
             handleImportedURLs(result)
         }
+        .fileImporter(
+            isPresented: $appState.showSaveLocationPicker,
+            allowedContentTypes: [.folder],
+            allowsMultipleSelection: false
+        ) { result in
+            handleSaveLocation(result)
+        }
         .dropDestination(for: URL.self) { urls, _ in
             handleDroppedURLs(urls)
         }
@@ -202,6 +209,16 @@ public struct ContentView: View {
 
         appState.open(url: supportedURL)
         return true
+    }
+
+    private func handleSaveLocation(_ result: Result<[URL], Error>) {
+        switch result {
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            appState.saveCurrentSpec(in: url)
+        case .failure(let error):
+            appState.errorMessage = "Failed to choose save location: \(error.localizedDescription)"
+        }
     }
 }
 

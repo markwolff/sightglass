@@ -19,6 +19,14 @@ struct ToolbarView: ToolbarContent {
                 Label("Open Spec", systemImage: "doc")
             }
             .help("Open Spec File")
+
+            Button {
+                appState.saveCurrentSpec()
+            } label: {
+                Label("Save Spec", systemImage: "square.and.arrow.down")
+            }
+            .help(appState.specFileURL == nil ? "Save Spec As .sightglass.yaml" : "Save Spec")
+            .disabled(!appState.canSave)
         }
 
         ToolbarItem(placement: .automatic) {

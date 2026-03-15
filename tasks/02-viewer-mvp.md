@@ -7,8 +7,8 @@ Ship the complete V1 "analyze and visualize" viewer experience described in `VIS
 ## Status
 
 - `In progress`
-- Completed so far: expanded app state, `.sightglass.yaml` loading via picker, drag-and-drop, and launch argument, repo folder intake, persisted recents, validation UX, differentiated empty states, and supporting tests.
-- Remaining work centers on save flows, renderer and interaction upgrades, richer sidebar and detail UX, export, UI automation, and performance coverage.
+- Completed so far: expanded app state, `.sightglass.yaml` loading via picker, drag-and-drop, and launch argument, repo folder intake, persisted recents, save/save-as flows, validation UX, differentiated empty states, and supporting tests.
+- Remaining work centers on renderer and interaction upgrades, richer sidebar and detail UX, export, UI automation, and performance coverage.
 
 ## Depends On
 
@@ -27,7 +27,7 @@ Ship the complete V1 "analyze and visualize" viewer experience described in `VIS
 - [x] `[A]` Support loading `.sightglass.yaml` via file picker, drag-and-drop, and command-line launch argument.
 - [x] `[A]` Add "Open Folder" flow even before direct analysis exists, so users can inspect a repo context and later generate or save specs into that workspace.
 - [x] `[A]` Persist recent files and recent folders so onboarding does not reset every launch.
-- [ ] `[A]` Add save and save-as support for `.sightglass.yaml`, including preserving comments only if the chosen persistence layer supports it.
+- [x] `[A]` Add save and save-as support for `.sightglass.yaml`, including preserving comments only if the chosen persistence layer supports it.
 - [x] `[A]` Surface validation results in the UI with clear blocking errors versus non-blocking warnings.
 - [ ] `[B]` Replace the current straight-line renderer in `Sources/Diagram/DiagramRenderer.swift` with the specified layer-aware pipeline: camera transform, visible rect calculation, layer backgrounds, edge render, node render.
 - [ ] `[B]` Implement viewport culling so off-screen nodes, edges, and labels are not drawn.
