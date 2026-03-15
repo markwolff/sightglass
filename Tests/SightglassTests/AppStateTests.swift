@@ -245,6 +245,43 @@ struct AppStateTests {
         #expect(state.freshnessState == .specLoaded)
     }
 
+    @Test func selectingFlowFocusesItsFirstStep() throws {
+        let defaults = makeIsolatedDefaults()
+        let specURL = FixtureLoader.fixtureURL("Specs/layered-rest-service.yaml")
+        let repoURL = FixtureLoader.repoURL("Repos/express-api")
+        let state = AppState(userDefaults: defaults, launchArguments: [])
+
+        state.loadSpec(from: specURL, repositoryRoot: repoURL)
+        let entryPointID = try #require(state.currentSpec?.entryPoints?.first?.id)
+        state.activateEntryPoint(id: entryPointID)
+        state.selectFlow(id: "user-login")
+
+        #expect(state.selectedFlowID == "user-login")
+        #expect(state.selectedNodeID == "auth-routes")
+        #expect(state.activeEntryPointID == nil)
+    }
+
+    @Test func hidingVisibleLayerClearsSelectionButSelectingNodeRevealsItAgain() throws {
+        let defaults = makeIsolatedDefaults()
+        let specURL = FixtureLoader.fixtureURL("Specs/layered-rest-service.yaml")
+        let repoURL = FixtureLoader.repoURL("Repos/express-api")
+        let state = AppState(userDefaults: defaults, launchArguments: [])
+
+        state.loadSpec(from: specURL, repositoryRoot: repoURL)
+        let entryPointID = try #require(state.currentSpec?.entryPoints?.first?.id)
+        state.activateEntryPoint(id: entryPointID)
+        state.setLayerVisibility(false, for: "api")
+
+        #expect(!state.visibleLayerIDs.contains("api"))
+        #expect(state.selectedNodeID == nil)
+        #expect(state.activeEntryPointID == nil)
+
+        state.selectNode(id: "auth-routes")
+
+        #expect(state.visibleLayerIDs.contains("api"))
+        #expect(state.selectedNodeID == "auth-routes")
+    }
+
     private func makeIsolatedDefaults() -> UserDefaults {
         let suiteName = "AppStateTests.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!

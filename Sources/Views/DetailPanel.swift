@@ -1,5 +1,8 @@
 import SwiftUI
 import SightglassCore
+#if canImport(AppKit)
+import AppKit
+#endif
 
 /// A panel that shows detailed information about the currently selected node.
 /// Appears as an overlay on the right side of the diagram.
@@ -15,12 +18,22 @@ struct DetailPanel: View {
     }
 
     private func nodeDetail(_ node: SpecNode) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Header
+        let incoming = incomingEdges(for: node)
+        let outgoing = outgoingEdges(for: node)
+
+        return VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Text(node.name)
-                    .font(.headline)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(node.name)
+                        .font(.headline)
+
+                    Text(node.id)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(.secondary)
+                }
+
                 Spacer()
+
                 Button {
                     appState.clearSelection()
                 } label: {
@@ -35,17 +48,10 @@ struct DetailPanel: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    // Layer
-                    if let layer = appState.currentSpec?.layers.first(where: { $0.id == node.layer }) {
-                        detailRow(label: "Layer", value: layer.name, color: layer.swiftUIColor)
-                    }
+                    layerSection(for: node)
+                    metadataSection(for: node)
+                    fileSection(for: node)
 
-                    // File
-                    if let file = node.file {
-                        detailRow(label: "File", value: file)
-                    }
-
-                    // Description
                     if let description = node.description {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Description")
@@ -56,36 +62,32 @@ struct DetailPanel: View {
                         }
                     }
 
-                    // Types
                     if let types = node.types, !types.isEmpty {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Types")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            ForEach(types, id: \.self) { type in
-                                Text(type)
-                                    .font(.system(.body, design: .monospaced))
-                            }
-                        }
+                        valueListSection(title: "Types", values: types)
                     }
 
-                    // Methods
                     if let methods = node.methods, !methods.isEmpty {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Methods")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            ForEach(methods, id: \.self) { method in
-                                Text(method)
-                                    .font(.system(.body, design: .monospaced))
-                            }
-                        }
+                        valueListSection(title: "Methods", values: methods)
                     }
 
-                    // Connected edges
-                    connectionsSection(for: node)
+                    if !incoming.isEmpty {
+                        connectionsSection(
+                            title: "Incoming",
+                            edges: incoming,
+                            node: node,
+                            accent: .green
+                        )
+                    }
 
-                    // Entry points
+                    if !outgoing.isEmpty {
+                        connectionsSection(
+                            title: "Outgoing",
+                            edges: outgoing,
+                            node: node,
+                            accent: .blue
+                        )
+                    }
+
                     entryPointsSection(for: node)
                 }
                 .padding()
@@ -115,53 +117,136 @@ struct DetailPanel: View {
         }
     }
 
-    // MARK: - Connections
-
-    private func connectionsSection(for node: SpecNode) -> some View {
+    private func layerSection(for node: SpecNode) -> some View {
         Group {
-            if let spec = appState.currentSpec {
-                let incoming = spec.edges.filter { $0.to == node.id }
-                let outgoing = spec.edges.filter { $0.from == node.id }
+            if let layer = appState.currentSpec?.layers.first(where: { $0.id == node.layer }) {
+                detailRow(label: "Layer", value: layer.name, color: layer.swiftUIColor)
+            } else {
+                detailRow(label: "Layer", value: node.layer)
+            }
+        }
+    }
 
-                if !incoming.isEmpty || !outgoing.isEmpty {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Connections")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+    private func metadataSection(for node: SpecNode) -> some View {
+        Group {
+            if node.technology != nil || node.owner != nil || node.lifecycle != nil {
+                VStack(alignment: .leading, spacing: 12) {
+                    if let technology = node.technology {
+                        detailRow(label: "Technology", value: technology)
+                    }
 
-                        ForEach(incoming) { edge in
-                            HStack {
-                                Image(systemName: "arrow.right")
-                                    .font(.caption2)
-                                    .foregroundColor(.green)
-                                Text(nodeNameForID(edge.from))
-                                    .font(.caption)
-                                if let label = edge.label {
-                                    Text("(\(label))")
-                                        .font(.caption2)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                        }
+                    if let owner = node.owner {
+                        detailRow(label: "Owner", value: owner)
+                    }
 
-                        ForEach(outgoing) { edge in
-                            HStack {
-                                Image(systemName: "arrow.left")
-                                    .font(.caption2)
-                                    .foregroundColor(.blue)
-                                Text(nodeNameForID(edge.to))
-                                    .font(.caption)
-                                if let label = edge.label {
-                                    Text("(\(label))")
-                                        .font(.caption2)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                        }
+                    if let lifecycle = node.lifecycle {
+                        detailRow(label: "Lifecycle", value: lifecycle)
                     }
                 }
             }
         }
+    }
+
+    private func fileSection(for node: SpecNode) -> some View {
+        Group {
+            if let file = node.file {
+                let resolvedURL = resolvedFileURL(for: file)
+                let fileExists = resolvedURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("File")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Text(file)
+                        .font(.system(.body, design: .monospaced))
+                        .textSelection(.enabled)
+
+                    Button {
+                        openResolvedFile(for: file)
+                    } label: {
+                        Label(fileExists ? "Open File" : "Open File Unavailable", systemImage: "arrow.up.forward.app")
+                    }
+                    .buttonStyle(.bordered)
+                    .disabled(!fileExists)
+                }
+            }
+        }
+    }
+
+    private func valueListSection(title: String, values: [String]) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title)
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            ForEach(values, id: \.self) { value in
+                Text(value)
+                    .font(.system(.body, design: .monospaced))
+            }
+        }
+    }
+
+    // MARK: - Connections
+
+    private func connectionsSection(
+        title: String,
+        edges: [SpecEdge],
+        node: SpecNode,
+        accent: Color
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            ForEach(edges) { edge in
+                connectionRow(edge, relativeTo: node, accent: accent)
+            }
+        }
+    }
+
+    private func connectionRow(_ edge: SpecEdge, relativeTo node: SpecNode, accent: Color) -> some View {
+        let peerNodeID = edge.from == node.id ? edge.to : edge.from
+        let peerName = nodeNameForID(peerNodeID)
+
+        return Button {
+            appState.selectNode(id: peerNodeID)
+        } label: {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(alignment: .top) {
+                    Image(systemName: edge.from == node.id ? "arrow.up.right" : "arrow.down.left")
+                        .font(.caption)
+                        .foregroundStyle(accent)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(peerName)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundStyle(.primary)
+
+                        Text(connectionSummary(for: edge))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer(minLength: 8)
+
+                    if let edgeType = edge.type {
+                        Text(edgeType.uppercased())
+                            .font(.caption2)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 3)
+                            .background(accent.opacity(0.12), in: Capsule())
+                            .foregroundStyle(accent)
+                    }
+                }
+            }
+            .padding(10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Entry Points
@@ -176,18 +261,43 @@ struct DetailPanel: View {
                         .foregroundColor(.secondary)
 
                     ForEach(entryPoints) { ep in
-                        HStack {
-                            Image(systemName: "arrow.right.circle.fill")
-                                .foregroundColor(.orange)
-                                .font(.caption)
-                            if let method = ep.method, let path = ep.path {
-                                Text("\(method) \(path)")
-                                    .font(.system(.caption, design: .monospaced))
-                            } else if let path = ep.path {
-                                Text(path)
-                                    .font(.system(.caption, design: .monospaced))
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Image(systemName: "arrow.right.circle.fill")
+                                    .foregroundColor(.orange)
+                                    .font(.caption)
+
+                                if let method = ep.method, let path = ep.path {
+                                    Text("\(method) \(path)")
+                                        .font(.system(.caption, design: .monospaced))
+                                } else if let path = ep.path {
+                                    Text(path)
+                                        .font(.system(.caption, design: .monospaced))
+                                } else {
+                                    Text(ep.type.uppercased())
+                                        .font(.caption)
+                                }
+                            }
+
+                            if let description = ep.description {
+                                Text(description)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            if let requestType = ep.requestType {
+                                Text("Request: \(requestType)")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            if let responseType = ep.responseType {
+                                Text("Response: \(responseType)")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
                             }
                         }
+                        .padding(.vertical, 4)
                     }
                 }
             }
@@ -198,5 +308,46 @@ struct DetailPanel: View {
 
     private func nodeNameForID(_ id: String) -> String {
         appState.currentSpec?.nodes.first(where: { $0.id == id })?.name ?? id
+    }
+
+    private func incomingEdges(for node: SpecNode) -> [SpecEdge] {
+        appState.currentSpec?.edges.filter { $0.to == node.id } ?? []
+    }
+
+    private func outgoingEdges(for node: SpecNode) -> [SpecEdge] {
+        appState.currentSpec?.edges.filter { $0.from == node.id } ?? []
+    }
+
+    private func connectionSummary(for edge: SpecEdge) -> String {
+        let parts = [
+            edge.label,
+            edge.dataType.map { "Data: \($0)" },
+            edge.protocolName.map { "Via: \($0)" },
+            edge.async == true ? "Async" : nil,
+        ].compactMap { $0 }
+
+        return parts.isEmpty ? "Select to inspect connected node" : parts.joined(separator: " | ")
+    }
+
+    private func resolvedFileURL(for path: String) -> URL? {
+        if path.hasPrefix("/") {
+            return URL(fileURLWithPath: path).standardizedFileURL
+        }
+
+        guard let rootURL = appState.currentRepoRoot else {
+            return nil
+        }
+
+        return rootURL.appendingPathComponent(path).standardizedFileURL
+    }
+
+    private func openResolvedFile(for path: String) {
+        guard let fileURL = resolvedFileURL(for: path) else {
+            return
+        }
+
+        #if canImport(AppKit)
+        NSWorkspace.shared.open(fileURL)
+        #endif
     }
 }

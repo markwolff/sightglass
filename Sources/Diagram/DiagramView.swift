@@ -22,6 +22,7 @@ struct DiagramView: View {
                 spec: spec,
                 nodePositions: appState.nodePositions,
                 selectedNodeID: appState.selectedNode?.id,
+                visibleLayerIDs: appState.visibleLayerIDs,
                 zoom: appState.zoomLevel * gestureZoom,
                 panOffset: combinedPanOffset,
                 canvasSize: size
@@ -96,6 +97,13 @@ struct DiagramView: View {
         // Find the node at the tapped point
         let nodeSize = CGSize(width: 160, height: 60)
         for (nodeID, position) in appState.nodePositions {
+            guard
+                let node = spec.nodes.first(where: { $0.id == nodeID }),
+                appState.visibleLayerIDs.contains(node.layer)
+            else {
+                continue
+            }
+
             let nodeRect = CGRect(
                 x: position.x - nodeSize.width / 2,
                 y: position.y - nodeSize.height / 2,

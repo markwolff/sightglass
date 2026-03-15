@@ -9,6 +9,7 @@ struct DiagramRenderer {
     let spec: CodeSpec
     let nodePositions: [String: CGPoint]
     let selectedNodeID: String?
+    let visibleLayerIDs: Set<String>
     let zoom: CGFloat
     let panOffset: CGSize
     let canvasSize: CGSize
@@ -55,6 +56,15 @@ struct DiagramRenderer {
     // MARK: - Edge Drawing
 
     private func drawEdge(_ edge: SpecEdge, in context: inout GraphicsContext) {
+        guard
+            let fromNode = spec.nodes.first(where: { $0.id == edge.from }),
+            let toNode = spec.nodes.first(where: { $0.id == edge.to }),
+            isLayerVisible(fromNode.layer),
+            isLayerVisible(toNode.layer)
+        else {
+            return
+        }
+
         guard let fromPos = nodePositions[edge.from],
               let toPos = nodePositions[edge.to] else { return }
 
@@ -111,6 +121,7 @@ struct DiagramRenderer {
     // MARK: - Node Drawing
 
     private func drawNode(_ node: SpecNode, in context: inout GraphicsContext) {
+        guard isLayerVisible(node.layer) else { return }
         guard let position = nodePositions[node.id] else { return }
 
         let rect = CGRect(
@@ -154,6 +165,13 @@ struct DiagramRenderer {
     // MARK: - Entry Point Drawing
 
     private func drawEntryPoint(_ entryPoint: EntryPoint, in context: inout GraphicsContext) {
+        guard
+            let node = spec.nodes.first(where: { $0.id == entryPoint.node }),
+            isLayerVisible(node.layer)
+        else {
+            return
+        }
+
         guard let nodePos = nodePositions[entryPoint.node] else { return }
 
         // TODO: Draw an indicator (e.g., small arrow or icon) pointing to the node
@@ -174,5 +192,9 @@ struct DiagramRenderer {
 
     private func colorForLayer(_ layerID: String) -> Color {
         spec.layers.first(where: { $0.id == layerID })?.swiftUIColor ?? .gray
+    }
+
+    private func isLayerVisible(_ layerID: String) -> Bool {
+        visibleLayerIDs.contains(layerID)
     }
 }

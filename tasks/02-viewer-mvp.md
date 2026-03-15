@@ -7,8 +7,8 @@ Ship the complete V1 "analyze and visualize" viewer experience described in `VIS
 ## Status
 
 - `In progress`
-- Completed so far: expanded app state, `.sightglass.yaml` loading via picker, drag-and-drop, and launch argument, repo folder intake, persisted recents, save/save-as flows, validation UX, differentiated empty states, and supporting tests.
-- Remaining work centers on renderer and interaction upgrades, richer sidebar and detail UX, export, UI automation, and performance coverage.
+- Completed so far: expanded app state, `.sightglass.yaml` loading via picker, drag-and-drop, and launch argument, repo folder intake, persisted recents, save/save-as flows, validation UX, upgraded sidebar and detail panel UX, differentiated empty states, and supporting tests.
+- Remaining work centers on renderer and interaction upgrades, export, UI automation, and performance coverage.
 
 ## Depends On
 
@@ -37,8 +37,8 @@ Ship the complete V1 "analyze and visualize" viewer experience described in `VIS
 - [ ] `[B]` Implement cursor-anchored zoom, bounded zoom range, panning, fit-to-screen, and stable hit testing under pan and zoom transforms.
 - [ ] `[B]` Add hover affordances with highlight state and pointer cursor semantics.
 - [ ] `[B]` Upgrade layout support to include the default hybrid layered layout and the alternative force-directed layout named in the vision.
-- [ ] `[C]` Upgrade `Sources/Views/SidebarView.swift` to include layer visibility toggles, search, flow picker, and entry point navigation.
-- [ ] `[C]` Upgrade `Sources/Views/DetailPanel.swift` to show incoming and outgoing edges, layer membership, file path open action, technology label, owner, lifecycle, methods, types, and entry points for the selected node.
+- [x] `[C]` Upgrade `Sources/Views/SidebarView.swift` to include layer visibility toggles, search, flow picker, and entry point navigation.
+- [x] `[C]` Upgrade `Sources/Views/DetailPanel.swift` to show incoming and outgoing edges, layer membership, file path open action, technology label, owner, lifecycle, methods, types, and entry points for the selected node.
 - [ ] `[C]` Upgrade `Sources/Views/ToolbarView.swift` to include layout mode toggle, zoom controls, fit-to-screen, export, and freshness indicator.
 - [ ] `[C]` Implement export to PNG and SVG with deterministic framing so exports are testable.
 - [x] `[C]` Add a proper empty state for "no repo selected" versus "repo selected but no spec generated yet" versus "spec failed validation."

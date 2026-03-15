@@ -28,7 +28,7 @@ public struct ContentView: View {
                         .overlay(alignment: .topTrailing) {
                             if appState.selectedNode != nil {
                                 DetailPanel()
-                                    .frame(width: 300)
+                                    .frame(width: 340)
                                     .padding()
                             }
                         }

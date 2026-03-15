@@ -394,6 +394,30 @@ public final class AppState: ObservableObject {
         open(url: location.url)
     }
 
+    func showAllLayers() {
+        guard let currentSpec else {
+            visibleLayerIDs = []
+            return
+        }
+
+        visibleLayerIDs = Set(currentSpec.layers.map(\.id))
+    }
+
+    func hideAllLayers() {
+        visibleLayerIDs.removeAll()
+        reconcileSelectionWithVisibleLayers()
+    }
+
+    func setLayerVisibility(_ isVisible: Bool, for layerID: String) {
+        if isVisible {
+            visibleLayerIDs.insert(layerID)
+        } else {
+            visibleLayerIDs.remove(layerID)
+        }
+
+        reconcileSelectionWithVisibleLayers()
+    }
+
     // MARK: - Layout
 
     /// Computes node positions using the active graph layout algorithm.
@@ -409,14 +433,31 @@ public final class AppState: ObservableObject {
 
     /// Selects a node by ID.
     func selectNode(id: String) {
+        revealLayerIfNeeded(forNodeID: id)
         selectedNodeID = id
+    }
+
+    func selectFlow(id: String?) {
+        selectedFlowID = id
+
+        guard let id, let flow = currentSpec?.flows?.first(where: { $0.id == id }) else {
+            return
+        }
+
+        activeEntryPointID = nil
+
+        let orderedSteps = flow.steps.sorted { $0.sequence < $1.sequence }
+        if let firstNodeID = orderedSteps.first?.from ?? orderedSteps.first?.to {
+            selectNode(id: firstNodeID)
+        }
     }
 
     /// Marks an entry point as the active navigation focus.
     func activateEntryPoint(id: String) {
         activeEntryPointID = id
+        selectedFlowID = nil
         if let nodeID = currentSpec?.entryPoints?.first(where: { $0.id == id })?.node {
-            selectedNodeID = nodeID
+            selectNode(id: nodeID)
         }
     }
 
@@ -461,6 +502,29 @@ public final class AppState: ObservableObject {
         selectedFlowID = nil
         activeEntryPointID = nil
         resetView()
+    }
+
+    private func revealLayerIfNeeded(forNodeID nodeID: String) {
+        guard let layerID = currentSpec?.nodes.first(where: { $0.id == nodeID })?.layer else {
+            return
+        }
+
+        visibleLayerIDs.insert(layerID)
+    }
+
+    private func reconcileSelectionWithVisibleLayers() {
+        if let selectedNode, !visibleLayerIDs.contains(selectedNode.layer) {
+            selectedNodeID = nil
+        }
+
+        if
+            let activeEntryPointID,
+            let nodeID = currentSpec?.entryPoints?.first(where: { $0.id == activeEntryPointID })?.node,
+            let layerID = currentSpec?.nodes.first(where: { $0.id == nodeID })?.layer,
+            !visibleLayerIDs.contains(layerID)
+        {
+            self.activeEntryPointID = nil
+        }
     }
 
     private func inspectRepository(at rootURL: URL) -> RepositoryContext {
