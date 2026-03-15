@@ -159,7 +159,7 @@ Developers edit the diagram (add a caching layer, split a module, add a new serv
 
 ### Developer Experience Walkthrough
 
-**Minute 0**: Install via `brew install --cask sightglass` or download DMG.
+**Minute 0**: Install with one pasted command: `curl -fsSL https://raw.githubusercontent.com/markwolff/sightglass/main/install.sh | sh`.
 
 **Minute 1**: Launch Sightglass. An empty workspace greets you with "Open a folder or drop a .sightglass.yaml file."
 
@@ -744,7 +744,9 @@ SightglassApp (@main SwiftUI App)
 | Verification | Re-analyze after agent changes, compare specs to verify correctness |
 | Interactive refactoring | "I want to add a caching layer between Service and Repository" → agent adds the code |
 
-### Future
+### Future (Explicitly Parked)
+
+These ideas stay parked until the desktop app ships with the one-command install path above.
 
 | Feature | Description |
 |---------|-------------|
@@ -763,7 +765,7 @@ SightglassApp (@main SwiftUI App)
 |-----------|-----------|
 | Code editing | Sightglass visualizes architecture. Agents edit code. |
 | Runtime monitoring / APM | Use Datadog, Sentry, etc. Sightglass may overlay their data in the future. |
-| Windows/Linux | macOS native only. SwiftUI Canvas is Apple-only. Web viewer planned for sharing. |
+| Windows/Linux | macOS native only. SwiftUI Canvas is Apple-only. No web viewer is on the current roadmap. |
 | Full IDE replacement | Sightglass is a companion tool, not an editor. |
 | Real-time collaboration | Single-user desktop app. Team features via shared spec files + CI. |
 
@@ -775,7 +777,7 @@ SightglassApp (@main SwiftUI App)
 
 | Metric | Target (6 months) | Measurement |
 |--------|-------------------|-------------|
-| Installs | 500 | Download count + brew analytics |
+| Installs | 500 | GitHub release downloads + install script runs or Homebrew installs |
 | Weekly active users | 300 | Opt-in analytics |
 | GitHub stars | 1,000 | GitHub |
 | Repos with .sightglass.yaml | 200 (12 months) | GitHub code search |
@@ -826,14 +828,14 @@ Sightglass is the only tool that combines AI-powered analysis with interactive a
 
 | Channel | Method |
 |---------|--------|
-| Primary | Direct download (DMG) from website |
-| Developer channel | `brew install --cask sightglass` |
+| Primary | Repo-hosted one-command install: `curl -fsSL https://raw.githubusercontent.com/markwolff/sightglass/main/install.sh | sh` |
+| Developer channel | Homebrew once it is also a single command end to end |
 | Source | GitHub (MIT license) |
-| Updates | Sparkle framework |
+| Updates | Re-run the install command or use `brew upgrade` when the Homebrew path exists |
 
 ### Technical Requirements
 
-Same as Bullpen: Apple Developer Program, Developer ID certificate, notarization, hardened runtime (non-sandboxed for file system access and LLM API calls), universal binary.
+GitHub Releases with a stable asset shape, plus Apple Developer Program, Developer ID certificate, notarization, hardened runtime (non-sandboxed for file system access and LLM API calls), and universal binaries once the signed app path becomes the default installer.
 
 ### Pricing Model
 
