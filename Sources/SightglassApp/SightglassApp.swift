@@ -1,4 +1,5 @@
 import SwiftUI
+import SightglassUI
 
 @main
 struct SightglassApp: App {
@@ -14,7 +15,7 @@ struct SightglassApp: App {
         .commands {
             CommandGroup(replacing: .newItem) {
                 Button("Open Spec File...") {
-                    appState.showFilePicker = true
+                    appState.presentFilePicker()
                 }
                 .keyboardShortcut("o", modifiers: .command)
             }

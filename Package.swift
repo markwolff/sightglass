@@ -50,6 +50,28 @@ let package = Package(
         ),
         .executableTarget(
             name: "Sightglass",
+            dependencies: ["SightglassUI"],
+            path: "Sources",
+            exclude: [
+                "Analysis",
+                "Diagram",
+                "Diagram/DiagramGeometrySnapshot.swift",
+                "Diagram/GraphLayout.swift",
+                "Models",
+                "Parser",
+                "SightglassApp/AppState.swift",
+                "SightglassApp/ContentView.swift",
+                "Views",
+            ],
+            sources: [
+                "SightglassApp/SightglassApp.swift",
+            ],
+            swiftSettings: [
+                .swiftLanguageMode(.v5),
+            ]
+        ),
+        .target(
+            name: "SightglassUI",
             dependencies: ["SightglassCore"],
             path: "Sources",
             exclude: [
@@ -58,6 +80,7 @@ let package = Package(
                 "Diagram/GraphLayout.swift",
                 "Models",
                 "Parser",
+                "SightglassApp/SightglassApp.swift",
             ],
             sources: [
                 "Diagram/DiagramRenderer.swift",
@@ -67,7 +90,6 @@ let package = Package(
                 "Diagram/NodeView.swift",
                 "SightglassApp/AppState.swift",
                 "SightglassApp/ContentView.swift",
-                "SightglassApp/SightglassApp.swift",
                 "Views/DetailPanel.swift",
                 "Views/SidebarView.swift",
                 "Views/ToolbarView.swift",
@@ -86,7 +108,10 @@ let package = Package(
         ),
         .testTarget(
             name: "SightglassTests",
-            dependencies: ["SightglassCore"],
+            dependencies: [
+                "SightglassCore",
+                "SightglassUI",
+            ],
             path: "Tests/SightglassTests",
             swiftSettings: [
                 .swiftLanguageMode(.v5),

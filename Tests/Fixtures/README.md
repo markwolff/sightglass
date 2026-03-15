@@ -20,6 +20,7 @@ scripts/verify-local.sh
 
 This builds the app target and runs the standalone verification harness, which:
 
+- runs the Swift test suites, including the offscreen macOS smoke render
 - parses and validates every canonical spec
 - checks manifest counts against the parsed spec shape
 - enforces layout invariants

@@ -2,7 +2,7 @@ import SwiftUI
 import Combine
 import SightglassCore
 
-class AppState: ObservableObject {
+public final class AppState: ObservableObject {
     // MARK: - Published State
 
     /// The currently loaded code spec
@@ -32,13 +32,22 @@ class AppState: ObservableObject {
     /// The URL of the currently loaded spec file
     @Published var specFileURL: URL?
 
+    public init() {}
+
     // MARK: - Loading
 
+    public func presentFilePicker() {
+        showFilePicker = true
+    }
+
     /// Loads a spec from the given file URL.
-    func loadSpec(from url: URL) {
+    func loadSpec(from url: URL, repositoryRoot: URL? = nil) {
         do {
             let spec = try SpecParser.parse(fileURL: url)
-            let validation = SpecParser.validate(spec, repositoryRoot: url.deletingLastPathComponent())
+            let validation = SpecParser.validate(
+                spec,
+                repositoryRoot: repositoryRoot ?? url.deletingLastPathComponent()
+            )
 
             guard validation.isValid else {
                 self.currentSpec = nil

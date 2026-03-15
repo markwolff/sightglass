@@ -1,9 +1,11 @@
 import SwiftUI
 
-struct ContentView: View {
+public struct ContentView: View {
     @EnvironmentObject var appState: AppState
 
-    var body: some View {
+    public init() {}
+
+    public var body: some View {
         NavigationSplitView {
             SidebarView()
                 .navigationSplitViewColumnWidth(min: 200, ideal: 250)

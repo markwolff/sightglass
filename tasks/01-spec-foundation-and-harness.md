@@ -33,7 +33,7 @@ Bring the project onto the CodeFlow v2 foundation from `VISION.md` and build the
 - [x] `[C]` Add benchmark coverage for YAML parse time, validation time, layout time, and render time for representative fixture sizes.
 - [x] `[C]` Add behavior tests for layout invariants that matter to users: all nodes receive positions, layers are vertically ordered by rank, nodes do not overlap within tolerances, and disconnected noise does not collapse the graph.
 - [x] `[C]` Avoid implementation-detail tests such as asserting exact force values, helper call counts, or internal sweep order inside layout code.
-- [ ] `[C]` Add a smoke test that launches the app with a fixture spec and verifies the empty state disappears and the main canvas renders.
+- [x] `[C]` Add a smoke test that launches the app with a fixture spec and verifies the empty state disappears and the main canvas renders.
 - [x] `[D]` Create one local gate command such as `scripts/verify-local.sh` or `make verify` that runs build, unit tests, UI tests, snapshots, and benchmarks that are practical in CI.
 - [x] `[D]` Document where fixtures live, how to update goldens, and how future agents should add new fixtures instead of inventing inline test data.
 - [x] `[D]` Add a short architecture note describing the v2 schema boundary so later work does not leak parsing rules into the rendering or analysis layers.
