@@ -4,6 +4,12 @@
 
 Ship the complete V1 "analyze and visualize" viewer experience described in `VISION.md`, grounded in the current SwiftUI app structure.
 
+## Status
+
+- `In progress`
+- Completed so far: expanded app state, `.sightglass.yaml` loading via picker, drag-and-drop, and launch argument, repo folder intake, persisted recents, validation UX, differentiated empty states, and supporting tests.
+- Remaining work centers on save flows, renderer and interaction upgrades, richer sidebar and detail UX, export, UI automation, and performance coverage.
+
 ## Depends On
 
 - `01-spec-foundation-and-harness.md`

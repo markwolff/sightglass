@@ -2,6 +2,12 @@
 
 This folder turns `VISION.md` into milestone-scoped execution tracks for agent-driven delivery. Read the files in order. Do not start a later milestone until the human gate at the end of the current file is cleared.
 
+## Current Status
+
+- Milestone 1 is implemented in code. Human review remains tracked in `Docs/milestone-1-signoff.md`.
+- Milestone 2 is in progress. Workspace intake, repo and spec loading, validation surfacing, persisted recents, and differentiated empty states are complete; renderer, interaction, export, and UI automation work remain open.
+- Milestones 3 through 6 are queued and unchanged.
+
 ## Assumptions Resolved Here
 
 - The product stays a native macOS app built from the current Swift Package structure.

@@ -4,6 +4,11 @@
 
 Bring the project onto the CodeFlow v2 foundation from `VISION.md` and build the automated harness that all later milestones rely on.
 
+## Status
+
+- `Implemented in code`
+- Human sign-off is still tracked in `Docs/milestone-1-signoff.md`.
+
 ## Depends On
 
 - No prior milestone.
