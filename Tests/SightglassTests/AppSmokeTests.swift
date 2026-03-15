@@ -8,13 +8,14 @@ struct AppSmokeTests {
     @Test func fixtureLoadReplacesEmptyStateAndRendersDiagramCanvas() throws {
         let fixtureURL = FixtureLoader.fixtureURL("Specs/layered-rest-service.yaml")
         let repositoryRoot = FixtureLoader.repoURL("Repos/express-api")
+        let defaults = makeIsolatedDefaults()
 
         let emptyStateImage = try render(
-            ContentView().environmentObject(AppState()),
+            ContentView().environmentObject(makeAppState(userDefaults: defaults)),
             size: CGSize(width: 1200, height: 800)
         )
 
-        let loadedState = AppState()
+        let loadedState = makeAppState(userDefaults: defaults)
         loadedState.loadSpec(from: fixtureURL, repositoryRoot: repositoryRoot)
 
         let spec = try #require(loadedState.currentSpec)
@@ -36,6 +37,32 @@ struct AppSmokeTests {
         )
         let diagramPixels = try nonBackgroundPixelCount(in: diagramImage)
         #expect(diagramPixels > 2_000)
+    }
+
+    @Test func repositoryAndValidationEmptyStatesRenderDistinctly() throws {
+        let blankState = makeAppState()
+        let blankImage = try render(
+            ContentView().environmentObject(blankState),
+            size: CGSize(width: 1200, height: 800)
+        )
+
+        let repoState = makeAppState()
+        repoState.openFolder(FixtureLoader.repoURL("Repos/express-api"))
+        let repoImage = try render(
+            ContentView().environmentObject(repoState),
+            size: CGSize(width: 1200, height: 800)
+        )
+
+        let invalidState = makeAppState()
+        invalidState.loadSpec(from: FixtureLoader.fixtureURL("Specs/duplicate-id-failure.yaml"))
+        #expect(!invalidState.validationResult.fatalErrors.isEmpty)
+        let invalidImage = try render(
+            ContentView().environmentObject(invalidState),
+            size: CGSize(width: 1200, height: 800)
+        )
+
+        #expect(try differingPixelCount(blankImage, repoImage) > 4_000)
+        #expect(try differingPixelCount(repoImage, invalidImage) > 4_000)
     }
 
     private func render<V: View>(_ view: V, size: CGSize) throws -> NSImage {
@@ -139,6 +166,17 @@ struct AppSmokeTests {
             bytesPerRow: bitmap.bytesPerRow,
             bytes: bytes
         )
+    }
+
+    private func makeAppState(userDefaults: UserDefaults? = nil) -> AppState {
+        AppState(userDefaults: userDefaults ?? makeIsolatedDefaults(), launchArguments: [])
+    }
+
+    private func makeIsolatedDefaults() -> UserDefaults {
+        let suiteName = "AppSmokeTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defaults.removePersistentDomain(forName: suiteName)
+        return defaults
     }
 }
 

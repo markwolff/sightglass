@@ -5,6 +5,28 @@ struct ToolbarView: ToolbarContent {
     @EnvironmentObject var appState: AppState
 
     var body: some ToolbarContent {
+        ToolbarItemGroup(placement: .navigation) {
+            Button {
+                appState.presentFolderPicker()
+            } label: {
+                Label("Open Folder", systemImage: "folder")
+            }
+            .help("Open Folder")
+
+            Button {
+                appState.presentFilePicker()
+            } label: {
+                Label("Open Spec", systemImage: "doc")
+            }
+            .help("Open Spec File")
+        }
+
+        ToolbarItem(placement: .automatic) {
+            Label(appState.freshnessState.title, systemImage: appState.freshnessState.systemImage)
+                .font(.caption)
+                .foregroundStyle(appState.freshnessState.isProblem ? .orange : .secondary)
+        }
+
         ToolbarItemGroup(placement: .primaryAction) {
             // Zoom controls
             Button {

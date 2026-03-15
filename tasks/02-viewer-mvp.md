@@ -17,12 +17,12 @@ Ship the complete V1 "analyze and visualize" viewer experience described in `VIS
 
 ## Tasks
 
-- [ ] `[A]` Expand `Sources/SightglassApp/AppState.swift` to track selected node ID, hovered node ID, visible layers, search query, selected flow ID, active entry point, layout algorithm, freshness state, and current repo root.
-- [ ] `[A]` Support loading `.sightglass.yaml` via file picker, drag-and-drop, and command-line launch argument.
-- [ ] `[A]` Add "Open Folder" flow even before direct analysis exists, so users can inspect a repo context and later generate or save specs into that workspace.
-- [ ] `[A]` Persist recent files and recent folders so onboarding does not reset every launch.
+- [x] `[A]` Expand `Sources/SightglassApp/AppState.swift` to track selected node ID, hovered node ID, visible layers, search query, selected flow ID, active entry point, layout algorithm, freshness state, and current repo root.
+- [x] `[A]` Support loading `.sightglass.yaml` via file picker, drag-and-drop, and command-line launch argument.
+- [x] `[A]` Add "Open Folder" flow even before direct analysis exists, so users can inspect a repo context and later generate or save specs into that workspace.
+- [x] `[A]` Persist recent files and recent folders so onboarding does not reset every launch.
 - [ ] `[A]` Add save and save-as support for `.sightglass.yaml`, including preserving comments only if the chosen persistence layer supports it.
-- [ ] `[A]` Surface validation results in the UI with clear blocking errors versus non-blocking warnings.
+- [x] `[A]` Surface validation results in the UI with clear blocking errors versus non-blocking warnings.
 - [ ] `[B]` Replace the current straight-line renderer in `Sources/Diagram/DiagramRenderer.swift` with the specified layer-aware pipeline: camera transform, visible rect calculation, layer backgrounds, edge render, node render.
 - [ ] `[B]` Implement viewport culling so off-screen nodes, edges, and labels are not drawn.
 - [ ] `[B]` Implement Bezier edge routing, arrowheads, midpoint labels, and style variants for `calls`, `async`, `publishes`, `subscribes`, `reads`, and `writes`.
@@ -35,7 +35,7 @@ Ship the complete V1 "analyze and visualize" viewer experience described in `VIS
 - [ ] `[C]` Upgrade `Sources/Views/DetailPanel.swift` to show incoming and outgoing edges, layer membership, file path open action, technology label, owner, lifecycle, methods, types, and entry points for the selected node.
 - [ ] `[C]` Upgrade `Sources/Views/ToolbarView.swift` to include layout mode toggle, zoom controls, fit-to-screen, export, and freshness indicator.
 - [ ] `[C]` Implement export to PNG and SVG with deterministic framing so exports are testable.
-- [ ] `[C]` Add a proper empty state for "no repo selected" versus "repo selected but no spec generated yet" versus "spec failed validation."
+- [x] `[C]` Add a proper empty state for "no repo selected" versus "repo selected but no spec generated yet" versus "spec failed validation."
 - [ ] `[C]` Add keyboard shortcuts for open, save, fit, zoom, and export even if richer keyboard navigation waits until Milestone 4.
 - [ ] `[D]` Add UI automation that verifies: open spec, select node, hide layer, search node, jump from entry point to node, fit-to-screen, export artifact creation.
 - [ ] `[D]` Add golden screenshots for the small, medium, and large fixture specs at key zoom levels so level-of-detail changes are caught automatically.
