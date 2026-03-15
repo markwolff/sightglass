@@ -1,0 +1,210 @@
+{
+  "edges" : [
+    {
+      "endX" : 364.68,
+      "endY" : 297.6,
+      "from" : "auth-controller",
+      "id" : "auth-controller->auth-service",
+      "startX" : 421.1,
+      "startY" : 101.75,
+      "to" : "auth-service"
+    },
+    {
+      "endX" : 297.65,
+      "endY" : 496.46,
+      "from" : "auth-service",
+      "id" : "auth-service->user-repo",
+      "startX" : 364.68,
+      "startY" : 297.6,
+      "to" : "user-repo"
+    },
+    {
+      "endX" : 563.02,
+      "endY" : 339.81,
+      "from" : "order-controller",
+      "id" : "order-controller->order-service",
+      "startX" : 597.59,
+      "startY" : 113.25,
+      "to" : "order-service"
+    },
+    {
+      "endX" : 552.22,
+      "endY" : 647.6,
+      "from" : "order-service",
+      "id" : "order-service->event-bus",
+      "startX" : 563.02,
+      "startY" : 339.81,
+      "to" : "event-bus"
+    },
+    {
+      "endX" : 694.6,
+      "endY" : 497.85,
+      "from" : "order-service",
+      "id" : "order-service->order-repo",
+      "startX" : 563.02,
+      "startY" : 339.81,
+      "to" : "order-repo"
+    },
+    {
+      "endX" : 764.9,
+      "endY" : 298.57,
+      "from" : "order-service",
+      "id" : "order-service->pricing-service",
+      "startX" : 563.02,
+      "startY" : 339.81,
+      "to" : "pricing-service"
+    },
+    {
+      "endX" : 421.1,
+      "endY" : 101.75,
+      "from" : "web-gateway",
+      "id" : "web-gateway->auth-controller",
+      "startX" : 235.1,
+      "startY" : 98.07,
+      "to" : "auth-controller"
+    },
+    {
+      "endX" : 597.59,
+      "endY" : 113.25,
+      "from" : "web-gateway",
+      "id" : "web-gateway->order-controller",
+      "startX" : 235.1,
+      "startY" : 98.07,
+      "to" : "order-controller"
+    }
+  ],
+  "entryPoints" : [
+    {
+      "id" : "auth-controller-http-\/login",
+      "node" : "auth-controller",
+      "x" : 321.1,
+      "y" : 101.75
+    },
+    {
+      "id" : "order-controller-http-\/orders",
+      "node" : "order-controller",
+      "x" : 497.59,
+      "y" : 113.25
+    }
+  ],
+  "layers" : [
+    {
+      "id" : "ingress",
+      "maxX" : 757.59,
+      "maxY" : 183.25,
+      "minX" : 75.1,
+      "minY" : 28.07,
+      "name" : "Ingress",
+      "rank" : 0
+    },
+    {
+      "id" : "application",
+      "maxX" : 924.9,
+      "maxY" : 409.81,
+      "minX" : 204.68,
+      "minY" : 227.6,
+      "name" : "Application",
+      "rank" : 1
+    },
+    {
+      "id" : "data",
+      "maxX" : 854.6,
+      "maxY" : 567.85,
+      "minX" : 137.65,
+      "minY" : 426.46,
+      "name" : "Data",
+      "rank" : 2
+    },
+    {
+      "id" : "operations",
+      "maxX" : 894.39,
+      "maxY" : 771.93,
+      "minX" : 392.22,
+      "minY" : 577.6,
+      "name" : "Operations",
+      "rank" : 3
+    }
+  ],
+  "nodes" : [
+    {
+      "centerX" : 421.1,
+      "centerY" : 101.75,
+      "height" : 60,
+      "id" : "auth-controller",
+      "layer" : "ingress",
+      "width" : 160
+    },
+    {
+      "centerX" : 364.68,
+      "centerY" : 297.6,
+      "height" : 60,
+      "id" : "auth-service",
+      "layer" : "application",
+      "width" : 160
+    },
+    {
+      "centerX" : 552.22,
+      "centerY" : 647.6,
+      "height" : 60,
+      "id" : "event-bus",
+      "layer" : "operations",
+      "width" : 160
+    },
+    {
+      "centerX" : 734.39,
+      "centerY" : 701.93,
+      "height" : 60,
+      "id" : "legacy-admin-script",
+      "layer" : "operations",
+      "width" : 160
+    },
+    {
+      "centerX" : 597.59,
+      "centerY" : 113.25,
+      "height" : 60,
+      "id" : "order-controller",
+      "layer" : "ingress",
+      "width" : 160
+    },
+    {
+      "centerX" : 694.6,
+      "centerY" : 497.85,
+      "height" : 60,
+      "id" : "order-repo",
+      "layer" : "data",
+      "width" : 160
+    },
+    {
+      "centerX" : 563.02,
+      "centerY" : 339.81,
+      "height" : 60,
+      "id" : "order-service",
+      "layer" : "application",
+      "width" : 160
+    },
+    {
+      "centerX" : 764.9,
+      "centerY" : 298.57,
+      "height" : 60,
+      "id" : "pricing-service",
+      "layer" : "application",
+      "width" : 160
+    },
+    {
+      "centerX" : 297.65,
+      "centerY" : 496.46,
+      "height" : 60,
+      "id" : "user-repo",
+      "layer" : "data",
+      "width" : 160
+    },
+    {
+      "centerX" : 235.1,
+      "centerY" : 98.07,
+      "height" : 60,
+      "id" : "web-gateway",
+      "layer" : "ingress",
+      "width" : 160
+    }
+  ]
+}

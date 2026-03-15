@@ -1,0 +1,37 @@
+name: bad-reference-failure
+version: 2
+
+layers:
+  - id: api
+    name: API
+    color: "#4A90D9"
+    rank: -1
+
+nodes:
+  - id: orphan-node
+    name: OrphanNode
+    layer: missing-layer
+    lifecycle: legacy
+
+edges:
+  - from: orphan-node
+    to: ghost-node
+    label: invalid edge
+    type: teleports
+    protocol: smtp
+
+entry_points:
+  - node: ghost-node
+    type: rpc
+    path: /bad
+
+flows:
+  - id: broken-flow
+    name: Broken Flow
+    trigger:
+      type: rpc
+    steps:
+      - from: orphan-node
+        to: ghost-node
+        label: missing target
+        sequence: 1

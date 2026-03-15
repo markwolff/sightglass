@@ -1,4 +1,5 @@
 import SwiftUI
+import SightglassCore
 
 /// The main diagram view that renders the code architecture graph.
 ///

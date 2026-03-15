@@ -1,4 +1,5 @@
 import SwiftUI
+import SightglassCore
 
 /// Renders the code architecture graph on a SwiftUI Canvas.
 ///

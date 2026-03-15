@@ -1,0 +1,16 @@
+name: nonexistent-file-warning
+version: 2
+
+layers:
+  - id: api
+    name: API
+    color: "#4A90D9"
+    rank: 0
+
+nodes:
+  - id: missing-file-node
+    name: MissingFileNode
+    layer: api
+    file: src/routes/missing.ts
+
+edges: []

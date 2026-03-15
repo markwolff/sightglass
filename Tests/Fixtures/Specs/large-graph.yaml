@@ -1,0 +1,235 @@
+name: commerce-monolith
+version: 2
+analyzed_at: 2026-03-15T14:20:00Z
+commit_sha: 6d5c4b3
+
+metadata:
+  repository: https://example.com/commerce-monolith
+  language: TypeScript
+  framework: Express + workers
+  description: Medium-size monolith fixture with shared services and one noisy disconnected node
+
+layers:
+  - id: ingress
+    name: Ingress
+    color: "#2667FF"
+    rank: 0
+  - id: application
+    name: Application
+    color: "#9C27B0"
+    rank: 1
+  - id: data
+    name: Data
+    color: "#2E8B57"
+    rank: 2
+  - id: operations
+    name: Operations
+    color: "#D97706"
+    rank: 3
+
+nodes:
+  - id: web-gateway
+    name: WebGateway
+    layer: ingress
+    file: src/http/gateway.ts
+    description: Shared ingress for browser traffic
+    technology: Express
+    owner: platform
+    lifecycle: production
+
+  - id: auth-controller
+    name: AuthController
+    layer: ingress
+    file: src/controllers/auth_controller.ts
+    description: Authentication HTTP controller
+    technology: Express Controller
+    owner: identity-platform
+    lifecycle: production
+
+  - id: order-controller
+    name: OrderController
+    layer: ingress
+    file: src/controllers/order_controller.ts
+    description: Order creation HTTP controller
+    technology: Express Controller
+    owner: commerce
+    lifecycle: production
+
+  - id: auth-service
+    name: AuthService
+    layer: application
+    file: src/services/auth_service.ts
+    description: Credential verification and token minting
+    technology: TypeScript Service
+    owner: identity-platform
+    lifecycle: production
+
+  - id: order-service
+    name: OrderService
+    layer: application
+    file: src/services/order_service.ts
+    description: Order orchestration
+    technology: TypeScript Service
+    owner: commerce
+    lifecycle: production
+
+  - id: pricing-service
+    name: PricingService
+    layer: application
+    file: src/services/pricing_service.ts
+    description: Computes price adjustments
+    technology: TypeScript Service
+    owner: commerce
+    lifecycle: production
+
+  - id: user-repo
+    name: UserRepository
+    layer: data
+    file: src/repos/user_repo.ts
+    description: User persistence
+    technology: PostgreSQL
+    owner: data-platform
+    lifecycle: production
+
+  - id: order-repo
+    name: OrderRepository
+    layer: data
+    file: src/repos/order_repo.ts
+    description: Order persistence
+    technology: PostgreSQL
+    owner: data-platform
+    lifecycle: production
+
+  - id: event-bus
+    name: EventBus
+    layer: operations
+    file: src/infrastructure/event_bus.ts
+    description: Publishes domain events
+    technology: Kafka
+    owner: platform
+    lifecycle: production
+
+  - id: legacy-admin-script
+    name: LegacyAdminScript
+    layer: operations
+    file: scripts/legacy_admin.sh
+    description: Unscheduled maintenance script kept for historical reasons
+    technology: Shell
+    owner: ops
+    lifecycle: deprecated
+
+edges:
+  - from: web-gateway
+    to: auth-controller
+    label: route /login
+    type: calls
+    protocol: https
+  - from: web-gateway
+    to: order-controller
+    label: route /orders
+    type: calls
+    protocol: https
+  - from: auth-controller
+    to: auth-service
+    label: authenticate
+    type: calls
+    protocol: function
+  - from: auth-service
+    to: user-repo
+    label: fetch user
+    type: reads
+    protocol: jdbc
+  - from: order-controller
+    to: order-service
+    label: create order
+    type: calls
+    protocol: function
+  - from: order-service
+    to: pricing-service
+    label: calculate totals
+    type: calls
+    protocol: function
+  - from: order-service
+    to: order-repo
+    label: persist order
+    type: writes
+    protocol: jdbc
+  - from: order-service
+    to: event-bus
+    label: publish order-created
+    type: publishes
+    protocol: kafka
+
+entry_points:
+  - node: auth-controller
+    type: http
+    method: POST
+    path: /login
+    description: User login
+  - node: order-controller
+    type: http
+    method: POST
+    path: /orders
+    description: Create order
+
+flows:
+  - id: login
+    name: Login Flow
+    description: Authenticates a user
+    trigger:
+      type: http
+      method: POST
+      path: /login
+    steps:
+      - from: auth-controller
+        to: auth-service
+        label: validate credentials
+        sequence: 1
+      - from: auth-service
+        to: user-repo
+        label: load user
+        sequence: 2
+  - id: create-order
+    name: Create Order Flow
+    description: Persists an order and emits an event
+    trigger:
+      type: http
+      method: POST
+      path: /orders
+    steps:
+      - from: order-controller
+        to: order-service
+        label: create order
+        sequence: 1
+      - from: order-service
+        to: pricing-service
+        label: calculate totals
+        sequence: 2
+      - from: order-service
+        to: order-repo
+        label: persist order
+        sequence: 3
+      - from: order-service
+        to: event-bus
+        label: publish order-created
+        sequence: 4
+
+types:
+  - id: LoginResponse
+    description: Login response
+    fields:
+      - name: token
+        type: string
+        required: true
+  - id: CreateOrderRequest
+    description: Order creation payload
+    fields:
+      - name: cartId
+        type: string
+        required: true
+  - id: OrderCreatedEvent
+    description: Event published when an order is created
+    fields:
+      - name: orderId
+        type: string
+        required: true

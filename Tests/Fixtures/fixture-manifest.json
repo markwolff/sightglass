@@ -1,0 +1,111 @@
+{
+  "specs": [
+    {
+      "id": "minimal-valid",
+      "path": "Specs/minimal-valid.yaml",
+      "repo": null,
+      "expected": { "layers": 1, "nodes": 1, "edges": 0, "entryPoints": 1, "flows": 0 },
+      "validation": { "fatalCodes": [], "warningCodes": [] },
+      "snapshot": "Geometry/minimal-valid.json"
+    },
+    {
+      "id": "layered-rest-service",
+      "path": "Specs/layered-rest-service.yaml",
+      "repo": "Repos/express-api",
+      "expected": { "layers": 3, "nodes": 4, "edges": 3, "entryPoints": 2, "flows": 1 },
+      "validation": { "fatalCodes": [], "warningCodes": [] },
+      "snapshot": "Geometry/layered-rest-service.json"
+    },
+    {
+      "id": "event-driven-service",
+      "path": "Specs/event-driven-service.yaml",
+      "repo": "Repos/event-driven-worker",
+      "expected": { "layers": 4, "nodes": 6, "edges": 6, "entryPoints": 1, "flows": 1 },
+      "validation": { "fatalCodes": [], "warningCodes": [] },
+      "snapshot": null
+    },
+    {
+      "id": "large-graph",
+      "path": "Specs/large-graph.yaml",
+      "repo": "Repos/medium-monolith",
+      "expected": { "layers": 4, "nodes": 10, "edges": 8, "entryPoints": 2, "flows": 2 },
+      "validation": { "fatalCodes": [], "warningCodes": [] },
+      "snapshot": "Geometry/large-graph.json"
+    },
+    {
+      "id": "duplicate-id-failure",
+      "path": "Specs/duplicate-id-failure.yaml",
+      "repo": null,
+      "expected": { "layers": 1, "nodes": 2, "edges": 0, "entryPoints": 0, "flows": 0 },
+      "validation": {
+        "fatalCodes": ["duplicate_node_id", "empty_layer_name", "empty_node_name"],
+        "warningCodes": ["invalid_layer_color"]
+      },
+      "snapshot": null
+    },
+    {
+      "id": "bad-reference-failure",
+      "path": "Specs/bad-reference-failure.yaml",
+      "repo": null,
+      "expected": { "layers": 1, "nodes": 1, "edges": 1, "entryPoints": 1, "flows": 1 },
+      "validation": {
+        "fatalCodes": [
+          "invalid_edge_protocol",
+          "invalid_edge_type",
+          "invalid_entry_point_type",
+          "invalid_flow_trigger_type",
+          "invalid_layer_rank",
+          "invalid_node_lifecycle",
+          "unknown_edge_target",
+          "unknown_entry_point_node",
+          "unknown_flow_target",
+          "unknown_layer_reference"
+        ],
+        "warningCodes": []
+      },
+      "snapshot": null
+    },
+    {
+      "id": "nonexistent-file-warning",
+      "path": "Specs/nonexistent-file-warning.yaml",
+      "repo": "Repos/express-api",
+      "expected": { "layers": 1, "nodes": 1, "edges": 0, "entryPoints": 0, "flows": 0 },
+      "validation": { "fatalCodes": [], "warningCodes": ["missing_node_file"] },
+      "snapshot": null
+    },
+    {
+      "id": "invalid-flow-ordering-failure",
+      "path": "Specs/invalid-flow-ordering-failure.yaml",
+      "repo": null,
+      "expected": { "layers": 2, "nodes": 2, "edges": 1, "entryPoints": 0, "flows": 1 },
+      "validation": { "fatalCodes": ["invalid_flow_sequence"], "warningCodes": [] },
+      "snapshot": null
+    }
+  ],
+  "repos": [
+    {
+      "id": "express-api",
+      "path": "Repos/express-api",
+      "pairedSpec": "layered-rest-service",
+      "expected": { "layers": 3, "nodes": 4, "edges": 3, "entryPoints": 2, "flows": 1 }
+    },
+    {
+      "id": "event-driven-worker",
+      "path": "Repos/event-driven-worker",
+      "pairedSpec": "event-driven-service",
+      "expected": { "layers": 4, "nodes": 6, "edges": 6, "entryPoints": 1, "flows": 1 }
+    },
+    {
+      "id": "medium-monolith",
+      "path": "Repos/medium-monolith",
+      "pairedSpec": "large-graph",
+      "expected": { "layers": 4, "nodes": 10, "edges": 8, "entryPoints": 2, "flows": 2 }
+    },
+    {
+      "id": "noisy-ambiguous-monolith",
+      "path": "Repos/noisy-ambiguous-monolith",
+      "pairedSpec": null,
+      "expected": { "layers": 3, "nodes": 5, "edges": 4, "entryPoints": 1, "flows": 1 }
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "edges" : [
+
+  ],
+  "entryPoints" : [
+    {
+      "id" : "home-route-http-\/",
+      "node" : "home-route",
+      "x" : 400,
+      "y" : 400
+    }
+  ],
+  "layers" : [
+    {
+      "id" : "api",
+      "maxX" : 660,
+      "maxY" : 470,
+      "minX" : 340,
+      "minY" : 330,
+      "name" : "API",
+      "rank" : 0
+    }
+  ],
+  "nodes" : [
+    {
+      "centerX" : 500,
+      "centerY" : 400,
+      "height" : 60,
+      "id" : "home-route",
+      "layer" : "api",
+      "width" : 160
+    }
+  ]
+}

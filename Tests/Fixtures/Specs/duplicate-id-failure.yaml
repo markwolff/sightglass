@@ -1,0 +1,18 @@
+name: duplicate-id-failure
+version: 2
+
+layers:
+  - id: api
+    name: ""
+    color: "#GGGGGG"
+    rank: 0
+
+nodes:
+  - id: duplicate-node
+    name: ""
+    layer: api
+  - id: duplicate-node
+    name: DuplicateNode
+    layer: api
+
+edges: []

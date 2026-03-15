@@ -1,0 +1,162 @@
+name: notification-service
+version: 2
+analyzed_at: 2026-03-15T14:10:00Z
+commit_sha: 9f8e7d6
+
+metadata:
+  repository: https://example.com/notification-service
+  language: Python
+  framework: FastAPI + Celery
+  description: Sends notifications via email, SMS, and push
+
+layers:
+  - id: api
+    name: API + Events
+    color: "#4A90D9"
+    rank: 0
+  - id: processing
+    name: Processing
+    color: "#7B68EE"
+    rank: 1
+  - id: delivery
+    name: Delivery Channels
+    color: "#E89040"
+    rank: 2
+  - id: data
+    name: Storage
+    color: "#50C878"
+    rank: 3
+
+nodes:
+  - id: event-consumer
+    name: EventConsumer
+    layer: api
+    file: src/consumers/events.py
+    description: Receives notification events from Kafka
+    technology: Kafka Consumer
+    owner: messaging-platform
+    lifecycle: production
+
+  - id: notification-router
+    name: NotificationRouter
+    layer: processing
+    file: src/services/router.py
+    description: Routes events to delivery channels
+    technology: Python Service
+    owner: messaging-platform
+    lifecycle: production
+    methods: [route(), determine_channels()]
+
+  - id: email-sender
+    name: EmailSender
+    layer: delivery
+    file: src/channels/email.py
+    description: Sends email notifications
+    technology: SendGrid Client
+    owner: messaging-platform
+    lifecycle: production
+
+  - id: sms-sender
+    name: SmsSender
+    layer: delivery
+    file: src/channels/sms.py
+    description: Sends SMS notifications
+    technology: Twilio Client
+    owner: messaging-platform
+    lifecycle: production
+
+  - id: push-sender
+    name: PushSender
+    layer: delivery
+    file: src/channels/push.py
+    description: Sends push notifications
+    technology: Firebase FCM
+    owner: messaging-platform
+    lifecycle: experimental
+
+  - id: notification-log
+    name: NotificationLog
+    layer: data
+    file: src/repos/notification_log.py
+    description: Stores delivery attempts
+    technology: PostgreSQL
+    owner: data-platform
+    lifecycle: production
+
+edges:
+  - from: event-consumer
+    to: notification-router
+    label: NotificationEvent
+    type: triggers
+    async: true
+    protocol: kafka
+  - from: notification-router
+    to: email-sender
+    label: sendEmail
+    type: calls
+    protocol: function
+  - from: notification-router
+    to: sms-sender
+    label: sendSms
+    type: calls
+    protocol: function
+  - from: notification-router
+    to: push-sender
+    label: sendPush
+    type: calls
+    protocol: function
+  - from: email-sender
+    to: notification-log
+    label: recordDelivery
+    type: writes
+    protocol: jdbc
+  - from: sms-sender
+    to: notification-log
+    label: recordDelivery
+    type: writes
+    protocol: jdbc
+
+entry_points:
+  - node: event-consumer
+    type: event
+    path: notification.events
+    description: Consumes notification events
+    request_type: NotificationEvent
+
+flows:
+  - id: send-push-notification
+    name: Send Push Notification
+    description: Routes a notification event to the push delivery path
+    trigger:
+      type: event
+      path: notification.events
+    steps:
+      - from: event-consumer
+        to: notification-router
+        label: consume event
+        sequence: 1
+        async: true
+      - from: notification-router
+        to: push-sender
+        label: deliver push notification
+        sequence: 2
+
+types:
+  - id: NotificationEvent
+    description: Incoming notification payload
+    fields:
+      - name: recipientId
+        type: string
+        required: true
+      - name: channel
+        type: string
+        required: true
+  - id: DeliveryAttempt
+    description: Stored delivery metadata
+    fields:
+      - name: status
+        type: string
+        required: true
+      - name: provider
+        type: string
+        required: true

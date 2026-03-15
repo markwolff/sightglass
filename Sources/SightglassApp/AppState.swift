@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import SightglassCore
 
 class AppState: ObservableObject {
     // MARK: - Published State
@@ -15,6 +16,9 @@ class AppState: ObservableObject {
 
     /// Error message to display, if any
     @Published var errorMessage: String?
+
+    /// Structured validation output for the loaded spec.
+    @Published var validationResult = ValidationResult()
 
     /// Current zoom level for the diagram
     @Published var zoomLevel: CGFloat = 1.0
@@ -34,10 +38,23 @@ class AppState: ObservableObject {
     func loadSpec(from url: URL) {
         do {
             let spec = try SpecParser.parse(fileURL: url)
+            let validation = SpecParser.validate(spec, repositoryRoot: url.deletingLastPathComponent())
+
+            guard validation.isValid else {
+                self.currentSpec = nil
+                self.specFileURL = url
+                self.selectedNode = nil
+                self.nodePositions = [:]
+                self.validationResult = validation
+                self.errorMessage = validation.summary
+                return
+            }
+
             self.currentSpec = spec
             self.specFileURL = url
             self.selectedNode = nil
-            self.errorMessage = nil
+            self.validationResult = validation
+            self.errorMessage = validation.warnings.isEmpty ? nil : validation.summary
             computeLayout(for: spec)
         } catch {
             self.errorMessage = "Failed to load spec: \(error.localizedDescription)"

@@ -1,4 +1,5 @@
 import SwiftUI
+import SightglassCore
 
 /// A SwiftUI view representing a single node in the diagram.
 ///

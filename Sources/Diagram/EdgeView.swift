@@ -1,4 +1,5 @@
 import SwiftUI
+import SightglassCore
 
 /// A SwiftUI view representing an edge (data flow) between two nodes.
 ///

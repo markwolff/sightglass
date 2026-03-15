@@ -1,0 +1,32 @@
+name: minimal-service
+version: 2
+analyzed_at: 2026-03-15T14:00:00Z
+commit_sha: a1b2c3d
+
+metadata:
+  repository: https://example.com/minimal-service
+  language: TypeScript
+  framework: Express
+  description: Minimal valid harness fixture
+
+layers:
+  - id: api
+    name: API
+    color: "#4A90D9"
+    rank: 0
+
+nodes:
+  - id: home-route
+    name: HomeRoute
+    layer: api
+    file: src/index.ts
+    description: Handles the root page
+
+edges: []
+
+entry_points:
+  - node: home-route
+    type: http
+    method: GET
+    path: /
+    description: Root endpoint

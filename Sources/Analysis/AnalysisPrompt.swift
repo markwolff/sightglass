@@ -8,7 +8,11 @@ struct AnalysisPrompt {
     /// The prompt instructs an AI agent to analyze a codebase and output
     /// YAML conforming to the Sightglass spec format.
     static func template() -> String {
-        // TODO: Load from bundled resource file if available
+        if let url = Bundle.module.url(forResource: "analyze-codebase", withExtension: "md", subdirectory: "prompts"),
+           let content = try? String(contentsOf: url, encoding: .utf8) {
+            return content
+        }
+
         if let url = Bundle.main.url(forResource: "analyze-codebase", withExtension: "md", subdirectory: "prompts"),
            let content = try? String(contentsOf: url, encoding: .utf8) {
             return content

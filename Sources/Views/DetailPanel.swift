@@ -1,4 +1,5 @@
 import SwiftUI
+import SightglassCore
 
 /// A panel that shows detailed information about the currently selected node.
 /// Appears as an overlay on the right side of the diagram.

@@ -1,0 +1,65 @@
+{
+  "benchmarks" : [
+    {
+      "averageMilliseconds" : 0.6058406829833984,
+      "id" : "minimal-valid.parse",
+      "iterations" : 25
+    },
+    {
+      "averageMilliseconds" : 0.007939338684082031,
+      "id" : "minimal-valid.validate",
+      "iterations" : 50
+    },
+    {
+      "averageMilliseconds" : 0.31926631927490234,
+      "id" : "minimal-valid.layout",
+      "iterations" : 15
+    },
+    {
+      "averageMilliseconds" : 0.005118846893310547,
+      "id" : "minimal-valid.render",
+      "iterations" : 50
+    },
+    {
+      "averageMilliseconds" : 3.3118820190429688,
+      "id" : "layered-rest-service.parse",
+      "iterations" : 25
+    },
+    {
+      "averageMilliseconds" : 0.045418739318847656,
+      "id" : "layered-rest-service.validate",
+      "iterations" : 50
+    },
+    {
+      "averageMilliseconds" : 2.2432645161946616,
+      "id" : "layered-rest-service.layout",
+      "iterations" : 15
+    },
+    {
+      "averageMilliseconds" : 0.016498565673828125,
+      "id" : "layered-rest-service.render",
+      "iterations" : 50
+    },
+    {
+      "averageMilliseconds" : 5.005917549133301,
+      "id" : "large-graph.parse",
+      "iterations" : 25
+    },
+    {
+      "averageMilliseconds" : 0.09939908981323242,
+      "id" : "large-graph.validate",
+      "iterations" : 50
+    },
+    {
+      "averageMilliseconds" : 10.323270161946615,
+      "id" : "large-graph.layout",
+      "iterations" : 15
+    },
+    {
+      "averageMilliseconds" : 0.03851890563964844,
+      "id" : "large-graph.render",
+      "iterations" : 50
+    }
+  ],
+  "generatedAt" : "2026-03-15T20:55:16Z"
+}

@@ -5,42 +5,48 @@ import Foundation
 /// The algorithm treats nodes as charged particles that repel each other
 /// and edges as springs that pull connected nodes together. Nodes are also
 /// attracted to their layer's horizontal band for a loosely hierarchical layout.
-struct GraphLayout {
-    let spec: CodeSpec
+public struct GraphLayout {
+    public let spec: CodeSpec
 
     /// Configuration for the force-directed simulation
-    struct Config {
+    public struct Config {
         /// Repulsion force between all nodes
-        var repulsionStrength: CGFloat = 5000
+        public var repulsionStrength: CGFloat = 5000
 
         /// Spring force along edges
-        var springStrength: CGFloat = 0.05
+        public var springStrength: CGFloat = 0.05
 
         /// Ideal edge length
-        var idealEdgeLength: CGFloat = 200
+        public var idealEdgeLength: CGFloat = 200
 
         /// Force pulling nodes toward their layer band
-        var layerGravity: CGFloat = 0.1
+        public var layerGravity: CGFloat = 0.1
 
         /// Damping factor to slow movement over iterations
-        var damping: CGFloat = 0.85
+        public var damping: CGFloat = 0.85
 
         /// Number of simulation iterations
-        var iterations: Int = 100
+        public var iterations: Int = 100
 
         /// Vertical spacing between layer bands
-        var layerSpacing: CGFloat = 200
+        public var layerSpacing: CGFloat = 200
 
         /// Horizontal spacing base for initial positions
-        var horizontalSpacing: CGFloat = 250
+        public var horizontalSpacing: CGFloat = 250
+
+        public init() {}
     }
 
-    var config = Config()
+    public var config = Config()
+
+    public init(spec: CodeSpec) {
+        self.spec = spec
+    }
 
     /// Computes positions for all nodes in the graph.
     ///
     /// Returns a dictionary mapping node ID to its computed position.
-    func computePositions() -> [String: CGPoint] {
+    public func computePositions() -> [String: CGPoint] {
         guard !spec.nodes.isEmpty else { return [:] }
 
         // Initialize positions using a layer-based heuristic
@@ -84,7 +90,8 @@ struct GraphLayout {
         }
 
         // Center the layout
-        return centerPositions(positions)
+        let resolvedPositions = resolveOverlaps(positions)
+        return centerPositions(resolvedPositions)
     }
 
     // MARK: - Initial Positions
@@ -100,7 +107,7 @@ struct GraphLayout {
         }
 
         // Assign each layer a vertical band
-        let layerOrder = spec.layers.map(\.id)
+        let layerOrder = orderedLayers().map(\.id)
 
         for (layerIndex, layerID) in layerOrder.enumerated() {
             let layerNodes = nodesByLayer[layerID] ?? []
@@ -166,7 +173,7 @@ struct GraphLayout {
 
     /// Applies a gentle force pulling nodes toward their layer's vertical band.
     private func applyLayerGravity(positions: [String: CGPoint], forces: inout [String: CGPoint]) {
-        let layerOrder = spec.layers.map(\.id)
+        let layerOrder = orderedLayers().map(\.id)
 
         for node in spec.nodes {
             guard let layerIndex = layerOrder.firstIndex(of: node.layer),
@@ -201,5 +208,64 @@ struct GraphLayout {
         }
 
         return centered
+    }
+
+    private func resolveOverlaps(_ positions: [String: CGPoint]) -> [String: CGPoint] {
+        var adjusted = positions
+        let minimumHorizontalSpacing: CGFloat = 170
+        let minimumVerticalSpacing: CGFloat = 70
+
+        for _ in 0..<12 {
+            var moved = false
+
+            for i in 0..<spec.nodes.count {
+                for j in (i + 1)..<spec.nodes.count {
+                    let leftNode = spec.nodes[i]
+                    let rightNode = spec.nodes[j]
+
+                    guard var leftPosition = adjusted[leftNode.id],
+                          var rightPosition = adjusted[rightNode.id] else {
+                        continue
+                    }
+
+                    let dx = rightPosition.x - leftPosition.x
+                    let dy = rightPosition.y - leftPosition.y
+
+                    guard abs(dx) < minimumHorizontalSpacing,
+                          abs(dy) < minimumVerticalSpacing else {
+                        continue
+                    }
+
+                    let horizontalPush = (minimumHorizontalSpacing - abs(dx)) / 2 + 8
+
+                    if dx >= 0 {
+                        leftPosition.x -= horizontalPush
+                        rightPosition.x += horizontalPush
+                    } else {
+                        leftPosition.x += horizontalPush
+                        rightPosition.x -= horizontalPush
+                    }
+
+                    adjusted[leftNode.id] = leftPosition
+                    adjusted[rightNode.id] = rightPosition
+                    moved = true
+                }
+            }
+
+            if !moved {
+                break
+            }
+        }
+
+        return adjusted
+    }
+
+    private func orderedLayers() -> [SpecLayer] {
+        spec.layers.sorted { lhs, rhs in
+            if lhs.rank == rhs.rank {
+                return lhs.id < rhs.id
+            }
+            return lhs.rank < rhs.rank
+        }
     }
 }

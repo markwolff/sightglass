@@ -1,0 +1,150 @@
+name: user-service
+version: 2
+analyzed_at: 2026-03-15T14:00:00Z
+commit_sha: a1b2c3d
+
+metadata:
+  repository: https://example.com/user-service
+  language: TypeScript
+  framework: Express
+  description: User registration and authentication service
+
+layers:
+  - id: api
+    name: API Routes
+    color: "#4A90D9"
+    rank: 0
+  - id: service
+    name: Services
+    color: "#7B68EE"
+    rank: 1
+  - id: data
+    name: Data Layer
+    color: "#50C878"
+    rank: 2
+
+nodes:
+  - id: auth-routes
+    name: AuthRoutes
+    layer: api
+    file: src/routes/auth.ts
+    description: HTTP routes for auth flows
+    technology: Express Router
+    owner: identity-platform
+    lifecycle: production
+    methods: [POST /login, POST /register]
+
+  - id: auth-service
+    name: AuthService
+    layer: service
+    file: src/services/auth.service.ts
+    description: Authentication and session business logic
+    technology: TypeScript Service
+    owner: identity-platform
+    lifecycle: production
+    types: [LoginRequest, AuthToken, UserCredentials]
+    methods: [login(), register(), validateToken(), hashPassword()]
+
+  - id: user-repo
+    name: UserRepository
+    layer: data
+    file: src/repos/user.repo.ts
+    description: User persistence
+    technology: Prisma
+    owner: identity-platform
+    lifecycle: production
+    methods: [findByEmail(), create(), update()]
+
+  - id: token-store
+    name: TokenStore
+    layer: data
+    file: src/services/token.store.ts
+    description: Session token persistence
+    technology: Redis
+    owner: platform-runtime
+    lifecycle: production
+    methods: [set(), get(), delete()]
+
+edges:
+  - from: auth-routes
+    to: auth-service
+    label: authenticate
+    type: calls
+    protocol: https
+  - from: auth-service
+    to: user-repo
+    label: findByEmail
+    type: reads
+    protocol: jdbc
+  - from: auth-service
+    to: token-store
+    label: storeToken
+    type: writes
+    protocol: redis
+
+entry_points:
+  - node: auth-routes
+    type: http
+    method: POST
+    path: /api/auth/login
+    description: Log a user in
+    request_type: LoginRequest
+    response_type: AuthToken
+  - node: auth-routes
+    type: http
+    method: POST
+    path: /api/auth/register
+    description: Register a new user
+    request_type: UserCredentials
+    response_type: AuthToken
+
+flows:
+  - id: user-login
+    name: User Login Flow
+    description: End-to-end login journey
+    trigger:
+      type: http
+      method: POST
+      path: /api/auth/login
+    steps:
+      - from: auth-routes
+        to: auth-service
+        label: validate credentials
+        sequence: 1
+      - from: auth-service
+        to: user-repo
+        label: find user by email
+        sequence: 2
+      - from: auth-service
+        to: token-store
+        label: store session token
+        sequence: 3
+
+types:
+  - id: LoginRequest
+    description: Login payload
+    fields:
+      - name: email
+        type: string
+        required: true
+      - name: password
+        type: string
+        required: true
+  - id: AuthToken
+    description: Session token
+    fields:
+      - name: token
+        type: string
+        required: true
+      - name: expiresAt
+        type: datetime
+        required: true
+  - id: UserCredentials
+    description: Registration payload
+    fields:
+      - name: email
+        type: string
+        required: true
+      - name: password
+        type: string
+        required: true

@@ -1,0 +1,44 @@
+name: invalid-flow-ordering
+version: 2
+
+layers:
+  - id: api
+    name: API
+    color: "#4A90D9"
+    rank: 0
+  - id: service
+    name: Service
+    color: "#7B68EE"
+    rank: 1
+
+nodes:
+  - id: route
+    name: Route
+    layer: api
+  - id: service-node
+    name: ServiceNode
+    layer: service
+
+edges:
+  - from: route
+    to: service-node
+    label: call
+    type: calls
+    protocol: function
+
+flows:
+  - id: broken-order
+    name: Broken Order
+    trigger:
+      type: http
+      method: POST
+      path: /orders
+    steps:
+      - from: route
+        to: service-node
+        label: start
+        sequence: 1
+      - from: route
+        to: service-node
+        label: skip sequence
+        sequence: 3

@@ -1,4 +1,5 @@
 import SwiftUI
+import SightglassCore
 
 /// Sidebar showing the loaded spec's nodes organized by layer,
 /// along with file loading controls.

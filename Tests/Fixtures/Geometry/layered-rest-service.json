@@ -1,0 +1,108 @@
+{
+  "edges" : [
+    {
+      "endX" : 498.53,
+      "endY" : 406.28,
+      "from" : "auth-routes",
+      "id" : "auth-routes->auth-service",
+      "startX" : 468.05,
+      "startY" : 202.27,
+      "to" : "auth-service"
+    },
+    {
+      "endX" : 587.56,
+      "endY" : 597.32,
+      "from" : "auth-service",
+      "id" : "auth-service->token-store",
+      "startX" : 498.53,
+      "startY" : 406.28,
+      "to" : "token-store"
+    },
+    {
+      "endX" : 412.44,
+      "endY" : 597.73,
+      "from" : "auth-service",
+      "id" : "auth-service->user-repo",
+      "startX" : 498.53,
+      "startY" : 406.28,
+      "to" : "user-repo"
+    }
+  ],
+  "entryPoints" : [
+    {
+      "id" : "auth-routes-http-\/api\/auth\/login",
+      "node" : "auth-routes",
+      "x" : 368.05,
+      "y" : 202.27
+    },
+    {
+      "id" : "auth-routes-http-\/api\/auth\/register",
+      "node" : "auth-routes",
+      "x" : 368.05,
+      "y" : 202.27
+    }
+  ],
+  "layers" : [
+    {
+      "id" : "api",
+      "maxX" : 628.05,
+      "maxY" : 272.27,
+      "minX" : 308.05,
+      "minY" : 132.27,
+      "name" : "API Routes",
+      "rank" : 0
+    },
+    {
+      "id" : "service",
+      "maxX" : 658.53,
+      "maxY" : 476.28,
+      "minX" : 338.53,
+      "minY" : 336.28,
+      "name" : "Services",
+      "rank" : 1
+    },
+    {
+      "id" : "data",
+      "maxX" : 747.56,
+      "maxY" : 667.73,
+      "minX" : 252.44,
+      "minY" : 527.32,
+      "name" : "Data Layer",
+      "rank" : 2
+    }
+  ],
+  "nodes" : [
+    {
+      "centerX" : 468.05,
+      "centerY" : 202.27,
+      "height" : 60,
+      "id" : "auth-routes",
+      "layer" : "api",
+      "width" : 160
+    },
+    {
+      "centerX" : 498.53,
+      "centerY" : 406.28,
+      "height" : 60,
+      "id" : "auth-service",
+      "layer" : "service",
+      "width" : 160
+    },
+    {
+      "centerX" : 587.56,
+      "centerY" : 597.32,
+      "height" : 60,
+      "id" : "token-store",
+      "layer" : "data",
+      "width" : 160
+    },
+    {
+      "centerX" : 412.44,
+      "centerY" : 597.73,
+      "height" : 60,
+      "id" : "user-repo",
+      "layer" : "data",
+      "width" : 160
+    }
+  ]
+}

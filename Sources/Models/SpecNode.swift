@@ -1,27 +1,36 @@
 import Foundation
 
 /// A node in the code architecture graph representing a module, service, or component.
-struct SpecNode: Codable, Identifiable, Hashable {
+public struct SpecNode: Codable, Identifiable, Hashable {
     /// Unique identifier for this node (e.g., "auth-controller")
-    let id: String
+    public let id: String
 
     /// Human-readable name (e.g., "AuthController")
-    let name: String
+    public let name: String
 
     /// The layer this node belongs to (references a SpecLayer.id)
-    let layer: String
+    public let layer: String
 
     /// File path within the analyzed project
-    let file: String?
+    public let file: String?
 
     /// Description of what this node does
-    let description: String?
+    public let description: String?
+
+    /// Optional framework or runtime label shown in the UI.
+    public let technology: String?
+
+    /// Optional owning team or group.
+    public let owner: String?
+
+    /// Optional lifecycle marker such as production or deprecated.
+    public let lifecycle: String?
 
     /// Optional list of key types/interfaces this node exposes
-    let types: [String]?
+    public let types: [String]?
 
     /// Optional list of methods or functions this node provides
-    let methods: [String]?
+    public let methods: [String]?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -29,6 +38,9 @@ struct SpecNode: Codable, Identifiable, Hashable {
         case layer
         case file
         case description
+        case technology
+        case owner
+        case lifecycle
         case types
         case methods
     }
