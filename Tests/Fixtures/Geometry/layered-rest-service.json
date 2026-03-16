@@ -1,30 +1,30 @@
 {
   "edges" : [
     {
-      "endX" : 498.53,
-      "endY" : 406.28,
+      "endX" : 458.68,
+      "endY" : 400,
       "from" : "auth-routes",
       "id" : "auth-routes->auth-service",
-      "startX" : 468.05,
-      "startY" : 202.27,
+      "startX" : 418.53,
+      "startY" : 200,
       "to" : "auth-service"
     },
     {
-      "endX" : 587.56,
-      "endY" : 597.32,
+      "endX" : 585,
+      "endY" : 600,
       "from" : "auth-service",
       "id" : "auth-service->token-store",
-      "startX" : 498.53,
-      "startY" : 406.28,
+      "startX" : 458.68,
+      "startY" : 400,
       "to" : "token-store"
     },
     {
-      "endX" : 412.44,
-      "endY" : 597.73,
+      "endX" : 415,
+      "endY" : 600,
       "from" : "auth-service",
       "id" : "auth-service->user-repo",
-      "startX" : 498.53,
-      "startY" : 406.28,
+      "startX" : 458.68,
+      "startY" : 400,
       "to" : "user-repo"
     }
   ],
@@ -32,73 +32,73 @@
     {
       "id" : "auth-routes-http-\/api\/auth\/login",
       "node" : "auth-routes",
-      "x" : 368.05,
-      "y" : 202.27
+      "x" : 318.53,
+      "y" : 200
     },
     {
       "id" : "auth-routes-http-\/api\/auth\/register",
       "node" : "auth-routes",
-      "x" : 368.05,
-      "y" : 202.27
+      "x" : 318.53,
+      "y" : 200
     }
   ],
   "layers" : [
     {
       "id" : "api",
-      "maxX" : 628.05,
-      "maxY" : 272.27,
-      "minX" : 308.05,
-      "minY" : 132.27,
+      "maxX" : 578.53,
+      "maxY" : 270,
+      "minX" : 258.53,
+      "minY" : 130,
       "name" : "API Routes",
       "rank" : 0
     },
     {
       "id" : "service",
-      "maxX" : 658.53,
-      "maxY" : 476.28,
-      "minX" : 338.53,
-      "minY" : 336.28,
+      "maxX" : 618.68,
+      "maxY" : 470,
+      "minX" : 298.68,
+      "minY" : 330,
       "name" : "Services",
       "rank" : 1
     },
     {
       "id" : "data",
-      "maxX" : 747.56,
-      "maxY" : 667.73,
-      "minX" : 252.44,
-      "minY" : 527.32,
+      "maxX" : 745,
+      "maxY" : 670,
+      "minX" : 255,
+      "minY" : 530,
       "name" : "Data Layer",
       "rank" : 2
     }
   ],
   "nodes" : [
     {
-      "centerX" : 468.05,
-      "centerY" : 202.27,
+      "centerX" : 418.53,
+      "centerY" : 200,
       "height" : 60,
       "id" : "auth-routes",
       "layer" : "api",
       "width" : 160
     },
     {
-      "centerX" : 498.53,
-      "centerY" : 406.28,
+      "centerX" : 458.68,
+      "centerY" : 400,
       "height" : 60,
       "id" : "auth-service",
       "layer" : "service",
       "width" : 160
     },
     {
-      "centerX" : 587.56,
-      "centerY" : 597.32,
+      "centerX" : 585,
+      "centerY" : 600,
       "height" : 60,
       "id" : "token-store",
       "layer" : "data",
       "width" : 160
     },
     {
-      "centerX" : 412.44,
-      "centerY" : 597.73,
+      "centerX" : 415,
+      "centerY" : 600,
       "height" : 60,
       "id" : "user-repo",
       "layer" : "data",

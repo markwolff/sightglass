@@ -144,6 +144,7 @@ struct GraphLayoutTests {
         )
 
         var layout = GraphLayout(spec: spec)
+        layout.algorithm = .forceDirected
         layout.config.iterations = 200
         let positions = layout.computePositions()
 
@@ -176,6 +177,7 @@ struct GraphLayoutTests {
         )
 
         var layout = GraphLayout(spec: spec)
+        layout.algorithm = .forceDirected
         layout.config.iterations = 200
         let positions = layout.computePositions()
 

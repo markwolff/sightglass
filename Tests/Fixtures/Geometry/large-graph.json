@@ -1,75 +1,75 @@
 {
   "edges" : [
     {
-      "endX" : 364.68,
-      "endY" : 297.6,
+      "endX" : 254.32,
+      "endY" : 300,
       "from" : "auth-controller",
       "id" : "auth-controller->auth-service",
-      "startX" : 421.1,
-      "startY" : 101.75,
+      "startX" : 356.48,
+      "startY" : 100,
       "to" : "auth-service"
     },
     {
-      "endX" : 297.65,
-      "endY" : 496.46,
+      "endX" : 200.83,
+      "endY" : 500,
       "from" : "auth-service",
       "id" : "auth-service->user-repo",
-      "startX" : 364.68,
-      "startY" : 297.6,
+      "startX" : 254.32,
+      "startY" : 300,
       "to" : "user-repo"
     },
     {
-      "endX" : 563.02,
-      "endY" : 339.81,
+      "endX" : 613.17,
+      "endY" : 300,
       "from" : "order-controller",
       "id" : "order-controller->order-service",
-      "startX" : 597.59,
-      "startY" : 113.25,
+      "startX" : 716.48,
+      "startY" : 100,
       "to" : "order-service"
     },
     {
-      "endX" : 552.22,
-      "endY" : 647.6,
+      "endX" : 530.9,
+      "endY" : 700,
       "from" : "order-service",
       "id" : "order-service->event-bus",
-      "startX" : 563.02,
-      "startY" : 339.81,
+      "startX" : 613.17,
+      "startY" : 300,
       "to" : "event-bus"
     },
     {
-      "endX" : 694.6,
-      "endY" : 497.85,
+      "endX" : 537.96,
+      "endY" : 500,
       "from" : "order-service",
       "id" : "order-service->order-repo",
-      "startX" : 563.02,
-      "startY" : 339.81,
+      "startX" : 613.17,
+      "startY" : 300,
       "to" : "order-repo"
     },
     {
-      "endX" : 764.9,
-      "endY" : 298.57,
+      "endX" : 799.17,
+      "endY" : 300,
       "from" : "order-service",
       "id" : "order-service->pricing-service",
-      "startX" : 563.02,
-      "startY" : 339.81,
+      "startX" : 613.17,
+      "startY" : 300,
       "to" : "pricing-service"
     },
     {
-      "endX" : 421.1,
-      "endY" : 101.75,
+      "endX" : 356.48,
+      "endY" : 100,
       "from" : "web-gateway",
       "id" : "web-gateway->auth-controller",
-      "startX" : 235.1,
-      "startY" : 98.07,
+      "startX" : 530.48,
+      "startY" : 100,
       "to" : "auth-controller"
     },
     {
-      "endX" : 597.59,
-      "endY" : 113.25,
+      "endX" : 716.48,
+      "endY" : 100,
       "from" : "web-gateway",
       "id" : "web-gateway->order-controller",
-      "startX" : 235.1,
-      "startY" : 98.07,
+      "startX" : 530.48,
+      "startY" : 100,
       "to" : "order-controller"
     }
   ],
@@ -77,130 +77,130 @@
     {
       "id" : "auth-controller-http-\/login",
       "node" : "auth-controller",
-      "x" : 321.1,
-      "y" : 101.75
+      "x" : 256.48,
+      "y" : 100
     },
     {
       "id" : "order-controller-http-\/orders",
       "node" : "order-controller",
-      "x" : 497.59,
-      "y" : 113.25
+      "x" : 616.48,
+      "y" : 100
     }
   ],
   "layers" : [
     {
       "id" : "ingress",
-      "maxX" : 757.59,
-      "maxY" : 183.25,
-      "minX" : 75.1,
-      "minY" : 28.07,
+      "maxX" : 876.48,
+      "maxY" : 170,
+      "minX" : 196.48,
+      "minY" : 30,
       "name" : "Ingress",
       "rank" : 0
     },
     {
       "id" : "application",
-      "maxX" : 924.9,
-      "maxY" : 409.81,
-      "minX" : 204.68,
-      "minY" : 227.6,
+      "maxX" : 959.17,
+      "maxY" : 370,
+      "minX" : 94.32,
+      "minY" : 230,
       "name" : "Application",
       "rank" : 1
     },
     {
       "id" : "data",
-      "maxX" : 854.6,
-      "maxY" : 567.85,
-      "minX" : 137.65,
-      "minY" : 426.46,
+      "maxX" : 697.96,
+      "maxY" : 570,
+      "minX" : 40.83,
+      "minY" : 430,
       "name" : "Data",
       "rank" : 2
     },
     {
       "id" : "operations",
-      "maxX" : 894.39,
-      "maxY" : 771.93,
-      "minX" : 392.22,
-      "minY" : 577.6,
+      "maxX" : 860.9,
+      "maxY" : 770,
+      "minX" : 370.9,
+      "minY" : 630,
       "name" : "Operations",
       "rank" : 3
     }
   ],
   "nodes" : [
     {
-      "centerX" : 421.1,
-      "centerY" : 101.75,
+      "centerX" : 356.48,
+      "centerY" : 100,
       "height" : 60,
       "id" : "auth-controller",
       "layer" : "ingress",
       "width" : 160
     },
     {
-      "centerX" : 364.68,
-      "centerY" : 297.6,
+      "centerX" : 254.32,
+      "centerY" : 300,
       "height" : 60,
       "id" : "auth-service",
       "layer" : "application",
       "width" : 160
     },
     {
-      "centerX" : 552.22,
-      "centerY" : 647.6,
+      "centerX" : 530.9,
+      "centerY" : 700,
       "height" : 60,
       "id" : "event-bus",
       "layer" : "operations",
       "width" : 160
     },
     {
-      "centerX" : 734.39,
-      "centerY" : 701.93,
+      "centerX" : 700.9,
+      "centerY" : 700,
       "height" : 60,
       "id" : "legacy-admin-script",
       "layer" : "operations",
       "width" : 160
     },
     {
-      "centerX" : 597.59,
-      "centerY" : 113.25,
+      "centerX" : 716.48,
+      "centerY" : 100,
       "height" : 60,
       "id" : "order-controller",
       "layer" : "ingress",
       "width" : 160
     },
     {
-      "centerX" : 694.6,
-      "centerY" : 497.85,
+      "centerX" : 537.96,
+      "centerY" : 500,
       "height" : 60,
       "id" : "order-repo",
       "layer" : "data",
       "width" : 160
     },
     {
-      "centerX" : 563.02,
-      "centerY" : 339.81,
+      "centerX" : 613.17,
+      "centerY" : 300,
       "height" : 60,
       "id" : "order-service",
       "layer" : "application",
       "width" : 160
     },
     {
-      "centerX" : 764.9,
-      "centerY" : 298.57,
+      "centerX" : 799.17,
+      "centerY" : 300,
       "height" : 60,
       "id" : "pricing-service",
       "layer" : "application",
       "width" : 160
     },
     {
-      "centerX" : 297.65,
-      "centerY" : 496.46,
+      "centerX" : 200.83,
+      "centerY" : 500,
       "height" : 60,
       "id" : "user-repo",
       "layer" : "data",
       "width" : 160
     },
     {
-      "centerX" : 235.1,
-      "centerY" : 98.07,
+      "centerX" : 530.48,
+      "centerY" : 100,
       "height" : 60,
       "id" : "web-gateway",
       "layer" : "ingress",
