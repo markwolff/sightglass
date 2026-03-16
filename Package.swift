@@ -18,6 +18,7 @@ let package = Package(
             ],
             path: "Sources",
             exclude: [
+                "Diagram/DiagramExporter.swift",
                 "Diagram/DiagramRenderer.swift",
                 "Diagram/DiagramView.swift",
                 "Diagram/EdgeView.swift",
@@ -83,6 +84,7 @@ let package = Package(
                 "SightglassApp/SightglassApp.swift",
             ],
             sources: [
+                "Diagram/DiagramExporter.swift",
                 "Diagram/DiagramRenderer.swift",
                 "Diagram/DiagramView.swift",
                 "Diagram/EdgeView.swift",

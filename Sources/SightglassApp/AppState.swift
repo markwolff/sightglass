@@ -151,6 +151,9 @@ public final class AppState: ObservableObject {
     /// Whether the save destination picker is shown.
     @Published var showSaveLocationPicker = false
 
+    /// Whether the export panel should be shown.
+    @Published var showExportPanel = false
+
     /// Error message to display, if any.
     @Published var errorMessage: String?
 
@@ -422,11 +425,14 @@ public final class AppState: ObservableObject {
 
     /// Computes node positions using the active graph layout algorithm.
     func computeLayout(for spec: CodeSpec) {
+        var layout = GraphLayout(spec: spec)
         switch layoutAlgorithm {
-        case .hybridLayered, .forceDirected:
-            let layout = GraphLayout(spec: spec)
-            nodePositions = layout.computePositions()
+        case .hybridLayered:
+            layout.algorithm = .hybridLayered
+        case .forceDirected:
+            layout.algorithm = .forceDirected
         }
+        nodePositions = layout.computePositions()
     }
 
     // MARK: - Selection
@@ -472,6 +478,43 @@ public final class AppState: ObservableObject {
     func resetView() {
         zoomLevel = 1.0
         panOffset = .zero
+    }
+
+    /// Fits the diagram so all visible nodes fill the given canvas size.
+    func fitToScreen(canvasSize: CGSize = CGSize(width: 800, height: 600)) {
+        guard !nodePositions.isEmpty else { return }
+
+        let allX = nodePositions.values.map(\.x)
+        let allY = nodePositions.values.map(\.y)
+
+        let minX = allX.min()! - 100
+        let maxX = allX.max()! + 100
+        let minY = allY.min()! - 50
+        let maxY = allY.max()! + 50
+
+        let contentWidth = maxX - minX
+        let contentHeight = maxY - minY
+
+        guard contentWidth > 0, contentHeight > 0 else { return }
+
+        let scaleX = canvasSize.width / contentWidth
+        let scaleY = canvasSize.height / contentHeight
+        let newZoom = min(scaleX, scaleY, 5.0)
+
+        let centerX = (minX + maxX) / 2
+        let centerY = (minY + maxY) / 2
+
+        zoomLevel = max(0.1, newZoom)
+        panOffset = CGSize(
+            width: canvasSize.width / 2 - centerX * zoomLevel,
+            height: canvasSize.height / 2 - centerY * zoomLevel
+        )
+    }
+
+    /// Requests an export action.
+    func requestExport() {
+        guard currentSpec != nil else { return }
+        showExportPanel = true
     }
 
     // MARK: - Internal Helpers

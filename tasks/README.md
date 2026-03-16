@@ -5,7 +5,7 @@ This folder turns `VISION.md` into milestone-scoped execution tracks for agent-d
 ## Current Status
 
 - Milestone 1 is implemented in code. Human review remains tracked in `Docs/milestone-1-signoff.md`.
-- Milestone 2 is in progress. Workspace intake, repo and spec loading, validation surfacing, persisted recents, and differentiated empty states are complete; renderer, interaction, export, and UI automation work remain open.
+- Milestone 2 is implemented in code. All tracks (A, B, C, D) complete with 43 passing tests. Human review remains tracked in the milestone file.
 - Milestones 3 through 6 are queued and unchanged.
 
 ## Assumptions Resolved Here
